@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="jMolecules"
+            id="org.jmolecules.eclipse.plugin.explorer">
+      </category>
+      <view
+            id="org.jmolecules.eclipse.plugin.explorer.views.ExplorerView"
+            name="jMolecules Explorer"
+            icon="icons/jMolecules.png"
+            class="org.jmolecules.eclipse.plugin.explorer.ExplorerView"
+            category="org.jmolecules.eclipse.plugin.explorer"
+            inject="true">
+      </view>
+   </extension>
+
+</plugin>

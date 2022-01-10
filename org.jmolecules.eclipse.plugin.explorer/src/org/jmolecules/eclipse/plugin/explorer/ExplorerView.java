@@ -12,6 +12,7 @@ import javax.annotation.PostConstruct;
 
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.custom.StackLayout;
@@ -27,6 +28,7 @@ public class ExplorerView extends ViewPart {
 	private TreeFactory treeFactory;
 
 	private ExplorerSelectionListener selectionListener;
+	private ExplorerActions explorerActions;
 	private TreeViewer treeViewer;
 	private Composite container;
 	private Label label;
@@ -35,6 +37,7 @@ public class ExplorerView extends ViewPart {
 	void postConstruct() {
 		imageProvider = new ImageProvider();
 		treeFactory = new TreeFactory(new JMolecules());
+		explorerActions = new ExplorerActions(imageProvider);
 	}
 
 	@Override
@@ -60,6 +63,9 @@ public class ExplorerView extends ViewPart {
 		getSite().setSelectionProvider(treeViewer);
 
 		((StackLayout) container.getLayout()).topControl = label;
+
+		IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
+		toolbarManager.add(explorerActions.collapseAllAction(treeViewer));
 	}
 
 	@Override
@@ -72,7 +78,6 @@ public class ExplorerView extends ViewPart {
 	@Override
 	public void dispose() {
 		deregisterSelectionListener();
-		imageProvider.dispose();
 		super.dispose();
 	}
 

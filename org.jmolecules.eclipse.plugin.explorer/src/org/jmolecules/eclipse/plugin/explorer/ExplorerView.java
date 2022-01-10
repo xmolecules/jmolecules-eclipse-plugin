@@ -58,6 +58,7 @@ public class ExplorerView extends ViewPart {
 		treeViewer.setContentProvider(new ExplorerContentProvider());
 		treeViewer.setLabelProvider(new ExplorerLabelProvider(imageProvider));
 		treeViewer.addDoubleClickListener(new ExplorerDoubleClickListener());
+		treeViewer.setComparator(new ExplorerComparator());
 		treeViewer.setUseHashlookup(true);
 		treeViewer.setInput(null);
 		getSite().setSelectionProvider(treeViewer);

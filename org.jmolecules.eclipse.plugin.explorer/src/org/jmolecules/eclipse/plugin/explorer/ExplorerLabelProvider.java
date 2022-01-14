@@ -49,6 +49,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept;
+import org.jmolecules.eclipse.plugin.explorer.JMolecules.Concepts;
 
 class ExplorerLabelProvider extends LabelProvider {
 
@@ -90,8 +91,9 @@ class ExplorerLabelProvider extends LabelProvider {
             sb.append(source.getElementName());
         }
 
-        if (treeNode.hasConcepts()) {
-            sb.append(" ").append(toString(treeNode.getConcepts()));
+        Concepts concepts = treeNode.getConcepts();
+        if (concepts != null) {
+            sb.append(" ").append(toString(concepts.get()));
         }
         return sb.toString();
     }

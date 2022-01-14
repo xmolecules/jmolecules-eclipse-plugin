@@ -28,7 +28,7 @@ import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
-import org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept;
+import org.jmolecules.eclipse.plugin.explorer.JMolecules.Concepts;
 
 class TreeFactory {
 
@@ -46,8 +46,8 @@ class TreeFactory {
             .flatMap(Optional::stream) //
             .collect(toList());
 
-        TreeNode root = new TreeNode(project, emptyList(), children);
-        return new TreeNode(null, emptyList(), List.of(root));
+        TreeNode root = new TreeNode(children, project);
+        return new TreeNode(List.of(root));
     }
 
     private Optional<TreeNode> treeNode(IPackageFragmentRoot source) {
@@ -58,24 +58,11 @@ class TreeFactory {
             .flatMap(Optional::stream) //
             .collect(toList());
 
-        return createIf(source, emptyList(), children);
+        return createIf(children, source, null);
     }
 
     private Optional<TreeNode> treeNode(IPackageFragment source) {
         IJavaElement[] sourceChildren = getChildren(source);
-
-        List<Concept> concepts = stream(sourceChildren) //
-            .filter(ICompilationUnit.class::isInstance) //
-            .map(ICompilationUnit.class::cast) //
-            .filter(JavaModelUtils::isPackageInfo) //
-            .limit(1) //
-            .flatMap(u -> stream(getChildren(u))) //
-            .filter(IPackageDeclaration.class::isInstance) //
-            .map(IPackageDeclaration.class::cast) //
-            .limit(1) //
-            .map(u -> jMolecules.expresses(u)) //
-            .findAny() //
-            .orElse(emptyList());
 
         List<TreeNode> children = stream(sourceChildren) //
             .filter(ICompilationUnit.class::isInstance) //
@@ -85,7 +72,20 @@ class TreeFactory {
             .flatMap(Optional::stream) //
             .collect(toList());
 
-        return createIf(source, concepts, children);
+        Optional<Concepts> concepts = stream(sourceChildren) //
+            .filter(ICompilationUnit.class::isInstance) //
+            .map(ICompilationUnit.class::cast) //
+            .filter(JavaModelUtils::isPackageInfo) //
+            .limit(1) //
+            .flatMap(u -> stream(getChildren(u))) //
+            .filter(IPackageDeclaration.class::isInstance) //
+            .map(IPackageDeclaration.class::cast) //
+            .limit(1) //
+            .map(jMolecules::expresses) //
+            .flatMap(Optional::stream) //
+            .findAny();
+
+        return createIf(children, source, concepts.orElse(null));
     }
 
     private Optional<TreeNode> treeNode(ICompilationUnit source) {
@@ -96,12 +96,10 @@ class TreeFactory {
             .flatMap(Optional::stream) //
             .collect(toList());
 
-        return createIf(source, emptyList(), children);
+        return createIf(children, source, null);
     }
 
     private Optional<TreeNode> treeNode(IType source) {
-        List<Concept> concepts = jMolecules.expresses(source);
-
         Stream<TreeNode> sourceChildren = stream(getChildren(source)) //
             .filter(IType.class::isInstance) //
             .map(IType.class::cast) //
@@ -117,33 +115,46 @@ class TreeFactory {
             .flatMap(Optional::stream);
 
         List<TreeNode> children = concat(sourceChildren, concat(fields, methods)).collect(toList());
-        return createIf(source, concepts, children);
+        Optional<Concepts> concepts = jMolecules.expresses(source);
+
+        return createIf(children, source, concepts.orElse(null));
     }
 
     private Optional<TreeNode> treeNode(IField source) {
-        return createIf(source, jMolecules.expresses(source), emptyList());
+        Optional<Concepts> concepts = jMolecules.expresses(source);
+        return createIf(emptyList(), source, concepts.orElse(null));
     }
 
     private Optional<TreeNode> treeNode(IMethod source) {
-        return createIf(source, jMolecules.expresses(source), emptyList());
+        Optional<Concepts> concepts = jMolecules.expresses(source);
+        return createIf(emptyList(), source, concepts.orElse(null));
     }
 
-    private static Optional<TreeNode> createIf(IJavaElement source, List<Concept> concepts, List<TreeNode> children) {
-        if (concepts.isEmpty() && children.isEmpty()) {
+    private static Optional<TreeNode> createIf(List<TreeNode> children, IJavaElement source, Concepts concepts) {
+        if (concepts == null && children.isEmpty()) {
             return empty();
         }
-        return of(new TreeNode(source, concepts, children));
+        return of(new TreeNode(children, source, concepts));
     }
 }
 
 class TreeNode {
 
-    private final IJavaElement source;
-    private final List<Concept> concepts;
-    private final List<TreeNode> children;
     private TreeNode parent;
+    private final List<TreeNode> children;
 
-    TreeNode(IJavaElement source, List<Concept> concepts, List<TreeNode> children) {
+    private final IJavaElement source;
+    private final Concepts concepts;
+
+    TreeNode(List<TreeNode> children) {
+        this(children, null, null);
+    }
+
+    TreeNode(List<TreeNode> children, IJavaElement source) {
+        this(children, source, null);
+    }
+
+    TreeNode(List<TreeNode> children, IJavaElement source, Concepts concepts) {
         this.source = source;
         this.concepts = concepts;
         this.children = children;
@@ -172,12 +183,8 @@ class TreeNode {
         return source;
     }
 
-    List<Concept> getConcepts() {
-        return unmodifiableList(concepts);
-    }
-
-    boolean hasConcepts() {
-        return !concepts.isEmpty();
+    Concepts getConcepts() {
+        return concepts;
     }
 
     List<TreeNode> getChildren() {

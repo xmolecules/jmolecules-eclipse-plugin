@@ -1,6 +1,8 @@
 package org.jmolecules.eclipse.plugin.explorer;
 
 import static java.util.Arrays.stream;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 import static org.apache.commons.lang.StringUtils.substringAfterLast;
@@ -14,6 +16,7 @@ import static org.jmolecules.eclipse.plugin.explorer.JavaModelUtils.isAnnotation
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.eclipse.jdt.core.IAnnotation;
@@ -24,6 +27,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.IType;
+import org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept.Type;
 
 class JMolecules {
 
@@ -33,8 +37,14 @@ class JMolecules {
         concepts = init();
     }
 
-    <T extends IJavaElement> List<Concept> expresses(T source) {
-        return concepts.stream().filter(c -> c.test(source)).collect(toList());
+    <T extends IJavaElement> Optional<Concepts> expresses(T source) {
+        List<Concept> chosen = this.concepts.stream().filter(c -> c.test(source)).collect(toList());
+
+        Concepts concepts = null;
+        if (!chosen.isEmpty()) {
+            concepts = new Concepts(chosen);
+        }
+        return ofNullable(concepts);
     }
 
     private static List<Concept> init() {
@@ -47,6 +57,27 @@ class JMolecules {
         concepts.add(new DomainEventHandler());
         concepts.add(new DomainRing());
         return concepts;
+    }
+
+    static class Concepts {
+
+        private final List<Concept> concepts;
+
+        Concepts(List<Concept> concepts) {
+            this.concepts = concepts;
+        }
+
+        List<Concept> get() {
+            return unmodifiableList(concepts);
+        }
+
+        List<Type> types() {
+            return concepts.stream().map(Concept::getType).collect(toList());
+        }
+
+        boolean contains(Concept concept) {
+            return concepts.contains(concept);
+        }
     }
 
     static interface Concept extends Predicate<IJavaElement>, Comparable<Concept> {

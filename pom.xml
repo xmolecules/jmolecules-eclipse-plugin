@@ -9,11 +9,39 @@
 
     <name>JMolecules for Eclipse Plugin</name>
     <description>The JMolecules for Eclipse Plugin supports developers to use JMolecules, i.e. to implement domain models in distraction-free, plain old Java.</description>
+    <url>https://github.com/xmolecules/jmolecules-eclipse-plugin</url>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>ingogriebsch</id>
+            <name>Ingo Griebsch</name>
+            <email>ingo.griebsch@gmx.de</email>
+            <url>https://ingogriebsch.de</url>
+            <timezone>Europe/Berlin</timezone>
+        </developer>
+    </developers>
 
     <modules>
         <module>org.jmolecules.eclipse.feature</module>
         <module>org.jmolecules.eclipse.plugin.explorer</module>
     </modules>
+
+    <scm>
+        <connection>scm:git:git://github.com/xmolecules/jmolecules-eclipse-plugin.git</connection>
+        <developerConnection>scm:git:git://github.com/xmolecules/jmolecules-eclipse-plugin.git</developerConnection>
+        <url>https://github.com/xmolecules/jmolecules-eclipse-plugin.git</url>
+    </scm>
+    <issueManagement>
+        <url>https://github.com/xmolecules/jmolecules-eclipse-plugin/issues</url>
+        <system>GitHub</system>
+    </issueManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

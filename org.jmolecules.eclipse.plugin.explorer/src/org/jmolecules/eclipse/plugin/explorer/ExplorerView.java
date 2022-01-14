@@ -60,13 +60,12 @@ public class ExplorerView extends ViewPart {
         treeViewer.addDoubleClickListener(new ExplorerDoubleClickListener());
         treeViewer.setComparator(new ExplorerComparator());
         treeViewer.setUseHashlookup(true);
-        treeViewer.setInput(null);
         getSite().setSelectionProvider(treeViewer);
-
-        ((StackLayout) container.getLayout()).topControl = label;
 
         IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
         toolbarManager.add(explorerActions.collapseAllAction(treeViewer));
+
+        show(label);
     }
 
     @Override

@@ -7,22 +7,23 @@ import org.eclipse.jface.viewers.TreeViewer;
 
 class ExplorerActions {
 
-	private final ImageProvider imageProvider;
+    private final ImageProvider imageProvider;
 
-	ExplorerActions(ImageProvider imageProvider) {
-		this.imageProvider = imageProvider;
-	}
+    ExplorerActions(ImageProvider imageProvider) {
+        this.imageProvider = imageProvider;
+    }
 
-	Action collapseAllAction(TreeViewer treeViewer) {
-		Action action = new Action("Collapse All") {
-			public void run() {
-				treeViewer.collapseAll();
-			}
-		};
+    Action collapseAllAction(TreeViewer treeViewer) {
+        Action action = new Action("Collapse All") {
 
-		action.setToolTipText("Collapse All");
-		imageProvider.getImageDescriptor(IMG_ELCL_COLLAPSEALL).ifPresent(action::setImageDescriptor);
+            public void run() {
+                treeViewer.collapseAll();
+            }
+        };
 
-		return action;
-	}
+        action.setToolTipText("Collapse All");
+        imageProvider.getImageDescriptor(IMG_ELCL_COLLAPSEALL).ifPresent(action::setImageDescriptor);
+
+        return action;
+    }
 }

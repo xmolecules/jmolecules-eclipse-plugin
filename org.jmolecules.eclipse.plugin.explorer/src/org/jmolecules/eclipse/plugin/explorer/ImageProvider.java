@@ -13,45 +13,46 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 
 class ImageProvider {
-	private final List<Function<String, ImageDescriptor>> imageDescriptorSuppliers;
-	private final List<Function<String, Image>> imageSuppliers;
 
-	ImageProvider() {
-		imageDescriptorSuppliers = List.of( //
-				(n) -> JavaUI.getSharedImages().getImageDescriptor(n), //
-				(n) -> PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(n) //
-		);
-		imageSuppliers = List.of( //
-				(n) -> JavaUI.getSharedImages().getImage(n), //
-				(n) -> PlatformUI.getWorkbench().getSharedImages().getImage(n) //
-		);
-	}
+    private final List<Function<String, ImageDescriptor>> imageDescriptorSuppliers;
+    private final List<Function<String, Image>> imageSuppliers;
 
-	Optional<Image> getImage(String name) {
-		return ofNullable(obtainImage(name));
-	}
+    ImageProvider() {
+        imageDescriptorSuppliers = List.of( //
+            (n) -> JavaUI.getSharedImages().getImageDescriptor(n), //
+            (n) -> PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(n) //
+        );
+        imageSuppliers = List.of( //
+            (n) -> JavaUI.getSharedImages().getImage(n), //
+            (n) -> PlatformUI.getWorkbench().getSharedImages().getImage(n) //
+        );
+    }
 
-	Optional<ImageDescriptor> getImageDescriptor(String name) {
-		return ofNullable(obtainImageDescriptor(name));
-	}
+    Optional<Image> getImage(String name) {
+        return ofNullable(obtainImage(name));
+    }
 
-	private Image obtainImage(String name) {
-		return imageSuppliers //
-				.stream() //
-				.map(s -> s.apply(name)) //
-				.filter(Objects::nonNull) //
-				.limit(1) //
-				.findAny() //
-				.orElse(null);
-	}
+    Optional<ImageDescriptor> getImageDescriptor(String name) {
+        return ofNullable(obtainImageDescriptor(name));
+    }
 
-	private ImageDescriptor obtainImageDescriptor(String name) {
-		return imageDescriptorSuppliers //
-				.stream() //
-				.map(s -> s.apply(name)) //
-				.filter(Objects::nonNull) //
-				.limit(1) //
-				.findAny() //
-				.orElse(null);
-	}
+    private Image obtainImage(String name) {
+        return imageSuppliers //
+            .stream() //
+            .map(s -> s.apply(name)) //
+            .filter(Objects::nonNull) //
+            .limit(1) //
+            .findAny() //
+            .orElse(null);
+    }
+
+    private ImageDescriptor obtainImageDescriptor(String name) {
+        return imageDescriptorSuppliers //
+            .stream() //
+            .map(s -> s.apply(name)) //
+            .filter(Objects::nonNull) //
+            .limit(1) //
+            .findAny() //
+            .orElse(null);
+    }
 }

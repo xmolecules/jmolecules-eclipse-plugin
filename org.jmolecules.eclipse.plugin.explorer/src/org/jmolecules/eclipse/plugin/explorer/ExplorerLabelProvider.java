@@ -1,6 +1,7 @@
 package org.jmolecules.eclipse.plugin.explorer;
 
 import static java.util.stream.Collectors.joining;
+
 import static org.eclipse.jdt.core.Flags.isPackageDefault;
 import static org.eclipse.jdt.core.Flags.isPrivate;
 import static org.eclipse.jdt.core.Flags.isProtected;
@@ -51,223 +52,224 @@ import org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept;
 
 class ExplorerLabelProvider extends LabelProvider {
 
-	private final ImageProvider imageProvider;
+    private final ImageProvider imageProvider;
 
-	ExplorerLabelProvider(ImageProvider imageProvider) {
-		this.imageProvider = imageProvider;
-	}
+    ExplorerLabelProvider(ImageProvider imageProvider) {
+        this.imageProvider = imageProvider;
+    }
 
-	@Override
-	public Image getImage(Object element) {
-		if (!(element instanceof TreeNode)) {
-			return null;
-		}
+    @Override
+    public Image getImage(Object element) {
+        if (!(element instanceof TreeNode)) {
+            return null;
+        }
 
-		TreeNode treeNode = (TreeNode) element;
-		return new ImageNameBuilder(treeNode).build().flatMap(imageProvider::getImage).orElse(null);
-	}
+        TreeNode treeNode = (TreeNode) element;
+        return new ImageNameBuilder(treeNode).build().flatMap(imageProvider::getImage).orElse(null);
+    }
 
-	@Override
-	public String getText(Object element) {
-		if (!(element instanceof TreeNode)) {
-			return null;
-		}
+    @Override
+    public String getText(Object element) {
+        if (!(element instanceof TreeNode)) {
+            return null;
+        }
 
-		TreeNode treeNode = (TreeNode) element;
-		return getText(treeNode);
-	}
+        TreeNode treeNode = (TreeNode) element;
+        return getText(treeNode);
+    }
 
-	private static String getText(TreeNode treeNode) {
-		IJavaElement source = treeNode.getSource();
+    private static String getText(TreeNode treeNode) {
+        IJavaElement source = treeNode.getSource();
 
-		StringBuilder sb = new StringBuilder();
-		if (source instanceof IPackageFragmentRoot) {
-			sb.append(toString((IPackageFragmentRoot) source));
-		} else if (source instanceof IPackageFragment) {
-			sb.append(toString((IPackageFragment) source));
-		} else {
-			sb.append(source.getElementName());
-		}
+        StringBuilder sb = new StringBuilder();
+        if (source instanceof IPackageFragmentRoot) {
+            sb.append(toString((IPackageFragmentRoot) source));
+        } else if (source instanceof IPackageFragment) {
+            sb.append(toString((IPackageFragment) source));
+        } else {
+            sb.append(source.getElementName());
+        }
 
-		if (treeNode.hasConcepts()) {
-			sb.append(" ").append(toString(treeNode.getConcepts()));
-		}
-		return sb.toString();
-	}
+        if (treeNode.hasConcepts()) {
+            sb.append(" ").append(toString(treeNode.getConcepts()));
+        }
+        return sb.toString();
+    }
 
-	private static String toString(IPackageFragmentRoot source) {
-		IPath path = source.getPath();
+    private static String toString(IPackageFragmentRoot source) {
+        IPath path = source.getPath();
 
-		StringBuilder sb = new StringBuilder();
-		if (source.getJavaProject().getElementName().equals(path.segment(0))) {
-			if (path.segmentCount() == 1) {
-				sb.append("<project root>");
-			} else {
-				sb.append(path.removeFirstSegments(1).makeRelative());
-			}
-		} else {
-			sb.append(path);
-		}
+        StringBuilder sb = new StringBuilder();
+        if (source.getJavaProject().getElementName().equals(path.segment(0))) {
+            if (path.segmentCount() == 1) {
+                sb.append("<project root>");
+            } else {
+                sb.append(path.removeFirstSegments(1).makeRelative());
+            }
+        } else {
+            sb.append(path);
+        }
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	private static String toString(IPackageFragment source) {
-		String name = source.getElementName();
-		name = name.isEmpty() ? "(default package)" : name;
-		return name;
-	}
+    private static String toString(IPackageFragment source) {
+        String name = source.getElementName();
+        name = name.isEmpty() ? "(default package)" : name;
+        return name;
+    }
 
-	private static String toString(List<Concept> concepts) {
-		return concepts.stream() //
-				.sorted() //
-				.map(c -> c.getName()) //
-				.collect(joining(", ", "<", ">"));
-	}
+    private static String toString(List<Concept> concepts) {
+        return concepts.stream() //
+            .sorted() //
+            .map(c -> c.getName()) //
+            .collect(joining(", ", "<", ">"));
+    }
 
-	static class ImageNameBuilder {
-		private final List<Function<TreeNode, String>> mappings = init();
-		private final TreeNode treeNode;
+    static class ImageNameBuilder {
 
-		ImageNameBuilder(TreeNode treeNode) {
-			this.treeNode = treeNode;
-		}
+        private final List<Function<TreeNode, String>> mappings = init();
+        private final TreeNode treeNode;
 
-		Optional<String> build() {
-			return mappings.stream().map(f -> f.apply(treeNode)).filter(Objects::nonNull).limit(1).findAny();
-		}
+        ImageNameBuilder(TreeNode treeNode) {
+            this.treeNode = treeNode;
+        }
 
-		private static List<Function<TreeNode, String>> init() {
-			List<Function<TreeNode, String>> mappings = new ArrayList<>();
-			mappings.add(projectMapping());
-			mappings.add(sourceFolderMapping());
-			mappings.add(packageMapping());
-			mappings.add(compilationUnitMapping());
-			mappings.add(annotationMapping());
-			mappings.add(interfaceMapping());
-			mappings.add(classMapping());
-			mappings.add(enumMapping());
-			mappings.add(fieldMapping());
-			mappings.add(methodMapping());
-			return mappings;
-		}
+        Optional<String> build() {
+            return mappings.stream().map(f -> f.apply(treeNode)).filter(Objects::nonNull).limit(1).findAny();
+        }
 
-		@SuppressWarnings("deprecation")
-		private static Function<TreeNode, String> projectMapping() {
-			return n -> n.getSource().getElementType() == IJavaElement.JAVA_PROJECT ? IMG_OBJ_PROJECT : null;
-		}
+        private static List<Function<TreeNode, String>> init() {
+            List<Function<TreeNode, String>> mappings = new ArrayList<>();
+            mappings.add(projectMapping());
+            mappings.add(sourceFolderMapping());
+            mappings.add(packageMapping());
+            mappings.add(compilationUnitMapping());
+            mappings.add(annotationMapping());
+            mappings.add(interfaceMapping());
+            mappings.add(classMapping());
+            mappings.add(enumMapping());
+            mappings.add(fieldMapping());
+            mappings.add(methodMapping());
+            return mappings;
+        }
 
-		private static Function<TreeNode, String> sourceFolderMapping() {
-			return n -> n.getSource().getElementType() == PACKAGE_FRAGMENT_ROOT ? IMG_OBJS_PACKFRAG_ROOT : null;
-		}
+        @SuppressWarnings("deprecation")
+        private static Function<TreeNode, String> projectMapping() {
+            return n -> n.getSource().getElementType() == IJavaElement.JAVA_PROJECT ? IMG_OBJ_PROJECT : null;
+        }
 
-		private static Function<TreeNode, String> packageMapping() {
-			return n -> n.getSource().getElementType() == PACKAGE_FRAGMENT ? IMG_OBJS_PACKAGE : null;
-		}
+        private static Function<TreeNode, String> sourceFolderMapping() {
+            return n -> n.getSource().getElementType() == PACKAGE_FRAGMENT_ROOT ? IMG_OBJS_PACKFRAG_ROOT : null;
+        }
 
-		private static Function<TreeNode, String> compilationUnitMapping() {
-			return n -> n.getSource().getElementType() == COMPILATION_UNIT ? IMG_OBJS_CUNIT : null;
-		}
+        private static Function<TreeNode, String> packageMapping() {
+            return n -> n.getSource().getElementType() == PACKAGE_FRAGMENT ? IMG_OBJS_PACKAGE : null;
+        }
 
-		private static Function<TreeNode, String> annotationMapping() {
-			return n -> {
-				if (n.getSource().getElementType() == ANNOTATION) {
-					return IMG_OBJS_ANNOTATION;
-				}
+        private static Function<TreeNode, String> compilationUnitMapping() {
+            return n -> n.getSource().getElementType() == COMPILATION_UNIT ? IMG_OBJS_CUNIT : null;
+        }
 
-				IJavaElement source = n.getSource();
-				if (source instanceof IType) {
-					IType type = (IType) source;
-					return isAnnotation(type) ? IMG_OBJS_ANNOTATION : null;
-				}
+        private static Function<TreeNode, String> annotationMapping() {
+            return n -> {
+                if (n.getSource().getElementType() == ANNOTATION) {
+                    return IMG_OBJS_ANNOTATION;
+                }
 
-				return null;
-			};
-		}
+                IJavaElement source = n.getSource();
+                if (source instanceof IType) {
+                    IType type = (IType) source;
+                    return isAnnotation(type) ? IMG_OBJS_ANNOTATION : null;
+                }
 
-		private static Function<TreeNode, String> interfaceMapping() {
-			return n -> {
-				IJavaElement source = n.getSource();
-				if (!(source instanceof IType)) {
-					return null;
-				}
-				IType type = (IType) source;
-				return isInterface(type) ? IMG_OBJS_INTERFACE : null;
-			};
-		}
+                return null;
+            };
+        }
 
-		private static Function<TreeNode, String> classMapping() {
-			return n -> {
-				IJavaElement source = n.getSource();
-				if (!(source instanceof IType)) {
-					return null;
-				}
+        private static Function<TreeNode, String> interfaceMapping() {
+            return n -> {
+                IJavaElement source = n.getSource();
+                if (!(source instanceof IType)) {
+                    return null;
+                }
+                IType type = (IType) source;
+                return isInterface(type) ? IMG_OBJS_INTERFACE : null;
+            };
+        }
 
-				IType type = (IType) source;
-				if (!isClass(type)) {
-					return null;
-				}
+        private static Function<TreeNode, String> classMapping() {
+            return n -> {
+                IJavaElement source = n.getSource();
+                if (!(source instanceof IType)) {
+                    return null;
+                }
 
-				return isPackageDefault(getFlags(type)) ? IMG_OBJS_CLASS_DEFAULT : IMG_OBJS_CLASS;
-			};
-		}
+                IType type = (IType) source;
+                if (!isClass(type)) {
+                    return null;
+                }
 
-		private static Function<TreeNode, String> enumMapping() {
-			return n -> {
-				IJavaElement source = n.getSource();
-				if (!(source instanceof IType)) {
-					return null;
-				}
+                return isPackageDefault(getFlags(type)) ? IMG_OBJS_CLASS_DEFAULT : IMG_OBJS_CLASS;
+            };
+        }
 
-				IType type = (IType) source;
-				return isEnum(type) ? IMG_OBJS_ENUM : null;
-			};
-		}
+        private static Function<TreeNode, String> enumMapping() {
+            return n -> {
+                IJavaElement source = n.getSource();
+                if (!(source instanceof IType)) {
+                    return null;
+                }
 
-		private static Function<TreeNode, String> fieldMapping() {
-			return n -> {
-				IJavaElement source = n.getSource();
-				if (!(source instanceof IField)) {
-					return null;
-				}
+                IType type = (IType) source;
+                return isEnum(type) ? IMG_OBJS_ENUM : null;
+            };
+        }
 
-				IField field = (IField) source;
-				Integer flags = getFlags(field);
+        private static Function<TreeNode, String> fieldMapping() {
+            return n -> {
+                IJavaElement source = n.getSource();
+                if (!(source instanceof IField)) {
+                    return null;
+                }
 
-				if (isPrivate(flags)) {
-					return IMG_FIELD_PRIVATE;
-				} else if (isProtected(flags)) {
-					return IMG_FIELD_PROTECTED;
-				} else if (isPackageDefault(flags)) {
-					return IMG_FIELD_DEFAULT;
-				} else if (isPublic(flags)) {
-					return IMG_FIELD_PUBLIC;
-				}
-				return null;
-			};
-		}
+                IField field = (IField) source;
+                Integer flags = getFlags(field);
 
-		private static Function<TreeNode, String> methodMapping() {
-			return n -> {
-				IJavaElement source = n.getSource();
-				if (!(source instanceof IMethod)) {
-					return null;
-				}
+                if (isPrivate(flags)) {
+                    return IMG_FIELD_PRIVATE;
+                } else if (isProtected(flags)) {
+                    return IMG_FIELD_PROTECTED;
+                } else if (isPackageDefault(flags)) {
+                    return IMG_FIELD_DEFAULT;
+                } else if (isPublic(flags)) {
+                    return IMG_FIELD_PUBLIC;
+                }
+                return null;
+            };
+        }
 
-				IMethod method = (IMethod) source;
-				Integer flags = getFlags(method);
+        private static Function<TreeNode, String> methodMapping() {
+            return n -> {
+                IJavaElement source = n.getSource();
+                if (!(source instanceof IMethod)) {
+                    return null;
+                }
 
-				if (isPrivate(flags)) {
-					return IMG_OBJS_PRIVATE;
-				} else if (isProtected(flags)) {
-					return IMG_OBJS_PROTECTED;
-				} else if (isPackageDefault(flags)) {
-					return IMG_OBJS_DEFAULT;
-				} else if (isPublic(flags)) {
-					return IMG_OBJS_PUBLIC;
-				}
-				return null;
-			};
-		}
-	}
+                IMethod method = (IMethod) source;
+                Integer flags = getFlags(method);
+
+                if (isPrivate(flags)) {
+                    return IMG_OBJS_PRIVATE;
+                } else if (isProtected(flags)) {
+                    return IMG_OBJS_PROTECTED;
+                } else if (isPackageDefault(flags)) {
+                    return IMG_OBJS_DEFAULT;
+                } else if (isPublic(flags)) {
+                    return IMG_OBJS_PUBLIC;
+                }
+                return null;
+            };
+        }
+    }
 }

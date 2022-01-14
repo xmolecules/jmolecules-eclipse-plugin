@@ -8,7 +8,7 @@ updates:
     schedule:
       interval: weekly
       time: '01:00'
-  
+
   # Maintain dependencies for GitHub Actions
   - package-ecosystem: github-actions
     directory: "/"

@@ -18,3 +18,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.navigator.resources
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: org.jmolecules.eclipse.plugin.explorer
+Export-Package: org.jmolecules.eclipse.plugin.explorer

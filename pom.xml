@@ -123,7 +123,7 @@
                     <includePackedArtifacts>true</includePackedArtifacts>
                     <resolver>p2</resolver>
                 </configuration>
-            </plugin>        
+            </plugin>
             <plugin>
                 <groupId>org.eclipse.tycho</groupId>
                 <artifactId>tycho-maven-plugin</artifactId>

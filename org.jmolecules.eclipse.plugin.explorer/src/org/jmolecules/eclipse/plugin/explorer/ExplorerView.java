@@ -12,6 +12,8 @@ import javax.annotation.PostConstruct;
 
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -20,6 +22,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
 public class ExplorerView extends ViewPart {
@@ -62,9 +65,16 @@ public class ExplorerView extends ViewPart {
         treeViewer.setUseHashlookup(true);
         getSite().setSelectionProvider(treeViewer);
 
-        IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
-        toolbarManager.add(explorerActions.collapseAllAction(treeViewer));
+        IActionBars actionBars = getViewSite().getActionBars();
+        Action collapseAllAction = explorerActions.collapseAllAction(treeViewer);
 
+        IToolBarManager toolbarManager = actionBars.getToolBarManager();
+        toolbarManager.add(collapseAllAction);
+
+        IMenuManager menuManager = actionBars.getMenuManager();
+        menuManager.add(collapseAllAction);
+
+        actionBars.clearGlobalActionHandlers();
         show(label);
     }
 

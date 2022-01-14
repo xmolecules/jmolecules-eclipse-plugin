@@ -1,0 +1,31 @@
+# This workflow builds the project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+name: build
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code base
+        # https://github.com/actions/checkout
+        uses: actions/checkout@v2.4.0
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 11
+        # https://github.com/actions/setup-java
+        uses: actions/setup-java@v2
+        with:
+          cache: 'maven'
+          check-latest: true
+          distribution: 'adopt'
+          java-version: 11
+
+      - name: Verify artifacts
+        run: mvn -B clean verify

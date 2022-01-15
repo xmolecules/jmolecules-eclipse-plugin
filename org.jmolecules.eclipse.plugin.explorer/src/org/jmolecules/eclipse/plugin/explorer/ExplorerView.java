@@ -123,12 +123,14 @@ public class ExplorerView extends ViewPart {
     }
 
     private void updateStatusLine(TreeNode tree) {
-        IStatusLineManager statusLineManager = getViewSite().getActionBars().getStatusLineManager();
+        IActionBars actionBars = getViewSite().getActionBars();
+        IStatusLineManager statusLineManager = actionBars.getStatusLineManager();
         if (tree != null) {
             statusLineManager.setMessage(new StatusLineMessageBuilder(tree).build());
         } else {
             statusLineManager.setMessage(null);
         }
+        actionBars.updateActionBars();
     }
 
     private void show(Control control) {

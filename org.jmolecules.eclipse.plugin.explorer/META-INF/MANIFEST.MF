@@ -15,7 +15,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.ui.ide,
  org.eclipse.ui.navigator,
- org.eclipse.ui.navigator.resources
+ org.eclipse.ui.navigator.resources,
+ com.google.guava
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: org.jmolecules.eclipse.plugin.explorer
 Export-Package: org.jmolecules.eclipse.plugin.explorer

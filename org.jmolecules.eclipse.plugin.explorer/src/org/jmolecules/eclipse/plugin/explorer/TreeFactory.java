@@ -6,6 +6,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static java.util.stream.Stream.concat;
 
 import static org.apache.commons.lang.builder.EqualsBuilder.reflectionEquals;
@@ -15,6 +16,7 @@ import static org.jmolecules.eclipse.plugin.explorer.JavaModelUtils.getFields;
 import static org.jmolecules.eclipse.plugin.explorer.JavaModelUtils.getMethods;
 import static org.jmolecules.eclipse.plugin.explorer.JavaModelUtils.isPackageInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -58,7 +60,7 @@ class TreeFactory {
             .flatMap(Optional::stream) //
             .collect(toList());
 
-        return createIf(children, source, null);
+        return createIf(children, source, Concepts.empty());
     }
 
     private Optional<TreeNode> treeNode(IPackageFragment source) {
@@ -72,7 +74,7 @@ class TreeFactory {
             .flatMap(Optional::stream) //
             .collect(toList());
 
-        Optional<Concepts> concepts = stream(sourceChildren) //
+        Optional<IPackageDeclaration> declaration = stream(sourceChildren) //
             .filter(ICompilationUnit.class::isInstance) //
             .map(ICompilationUnit.class::cast) //
             .filter(JavaModelUtils::isPackageInfo) //
@@ -81,11 +83,9 @@ class TreeFactory {
             .filter(IPackageDeclaration.class::isInstance) //
             .map(IPackageDeclaration.class::cast) //
             .limit(1) //
-            .map(jMolecules::expresses) //
-            .flatMap(Optional::stream) //
             .findAny();
 
-        return createIf(children, source, concepts.orElse(null));
+        return createIf(children, source, declaration.map(jMolecules::expresses).orElse(Concepts.empty()));
     }
 
     private Optional<TreeNode> treeNode(ICompilationUnit source) {
@@ -96,7 +96,7 @@ class TreeFactory {
             .flatMap(Optional::stream) //
             .collect(toList());
 
-        return createIf(children, source, null);
+        return createIf(children, source, Concepts.empty());
     }
 
     private Optional<TreeNode> treeNode(IType source) {
@@ -115,23 +115,21 @@ class TreeFactory {
             .flatMap(Optional::stream);
 
         List<TreeNode> children = concat(sourceChildren, concat(fields, methods)).collect(toList());
-        Optional<Concepts> concepts = jMolecules.expresses(source);
+        Concepts concepts = jMolecules.expresses(source);
 
-        return createIf(children, source, concepts.orElse(null));
+        return createIf(children, source, concepts);
     }
 
     private Optional<TreeNode> treeNode(IField source) {
-        Optional<Concepts> concepts = jMolecules.expresses(source);
-        return createIf(emptyList(), source, concepts.orElse(null));
+        return createIf(emptyList(), source, jMolecules.expresses(source));
     }
 
     private Optional<TreeNode> treeNode(IMethod source) {
-        Optional<Concepts> concepts = jMolecules.expresses(source);
-        return createIf(emptyList(), source, concepts.orElse(null));
+        return createIf(emptyList(), source, jMolecules.expresses(source));
     }
 
     private static Optional<TreeNode> createIf(List<TreeNode> children, IJavaElement source, Concepts concepts) {
-        if (concepts == null && children.isEmpty()) {
+        if (children.isEmpty() && concepts.isEmpty()) {
             return empty();
         }
         return of(new TreeNode(children, source, concepts));
@@ -155,10 +153,10 @@ class TreeNode {
     }
 
     TreeNode(List<TreeNode> children, IJavaElement source, Concepts concepts) {
-        this.source = source;
-        this.concepts = concepts;
-        this.children = children;
         children.forEach(c -> c.parent = this);
+        this.children = children != null ? children : new ArrayList<>();
+        this.source = source;
+        this.concepts = concepts != null ? concepts : Concepts.empty();
     }
 
     @Override
@@ -185,6 +183,10 @@ class TreeNode {
 
     Concepts getConcepts() {
         return concepts;
+    }
+
+    Concepts collectConcepts() {
+        return concepts.merge(children.stream().map(TreeNode::collectConcepts).collect(toSet()).toArray(new Concepts[0]));
     }
 
     List<TreeNode> getChildren() {

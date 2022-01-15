@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -24,6 +25,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
+import org.jmolecules.eclipse.plugin.explorer.JMolecules.Concepts;
 
 public class ExplorerView extends ViewPart {
 
@@ -106,12 +108,23 @@ public class ExplorerView extends ViewPart {
             treeViewer.setSelection(new StructuredSelection(n), true);
         });
 
+        updateStatusLine(tree);
         show(treeViewer.getControl());
     }
 
     void reset() {
         treeViewer.setInput(null);
+        updateStatusLine(null);
         show(label);
+    }
+
+    private void updateStatusLine(TreeNode tree) {
+        IStatusLineManager statusLineManager = getViewSite().getActionBars().getStatusLineManager();
+        if (tree != null) {
+            statusLineManager.setMessage(new StatusLineMessageBuilder(tree).build());
+        } else {
+            statusLineManager.setMessage(null);
+        }
     }
 
     private void show(Control control) {
@@ -126,5 +139,36 @@ public class ExplorerView extends ViewPart {
 
     private void deregisterSelectionListener() {
         getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(selectionListener);
+    }
+
+    private static class StatusLineMessageBuilder {
+
+        private final TreeNode tree;
+
+        StatusLineMessageBuilder(TreeNode tree) {
+            this.tree = tree;
+        }
+
+        String build() {
+            TreeNode node = tree.getChildren().iterator().next();
+            Concepts concepts = node.collectConcepts();
+            int conceptCount = concepts.get().size();
+
+            StringBuilder sb = new StringBuilder(node.getSource().getElementName()).append(" [expresses ");
+            if (conceptCount == 0) {
+                sb.append("no concepts]");
+            } else {
+                int categoryCount = concepts.getCategories().size();
+                sb.append(conceptCount) //
+                    .append(" concept") //
+                    .append(conceptCount == 1 ? "" : "s") //
+                    .append(" from ") //
+                    .append(categoryCount) //
+                    .append(" categor") //
+                    .append(categoryCount == 1 ? "y" : "ies") //
+                    .append("]");
+            }
+            return sb.toString();
+        }
     }
 }

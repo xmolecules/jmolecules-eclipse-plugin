@@ -92,7 +92,7 @@ class ExplorerLabelProvider extends LabelProvider {
         }
 
         Concepts concepts = treeNode.getConcepts();
-        if (concepts != null) {
+        if (!concepts.isEmpty()) {
             sb.append(" ").append(toString(concepts.get()));
         }
         return sb.toString();

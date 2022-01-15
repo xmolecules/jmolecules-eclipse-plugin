@@ -2,21 +2,23 @@ package org.jmolecules.eclipse.plugin.explorer;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.unmodifiableList;
-import static java.util.Optional.ofNullable;
+import static java.util.List.copyOf;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 import static org.apache.commons.lang.StringUtils.substringAfterLast;
 import static org.apache.commons.lang.StringUtils.substringBeforeLast;
-import static org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept.Type.DDD;
-import static org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept.Type.EVENTS;
-import static org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept.Type.ONION_ARCHITECTURE;
+import static org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept.Category.DDD;
+import static org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept.Category.EVENTS;
+import static org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept.Category.ONION_ARCHITECTURE;
 import static org.jmolecules.eclipse.plugin.explorer.JavaModelUtils.getAnnotations;
 import static org.jmolecules.eclipse.plugin.explorer.JavaModelUtils.getImports;
 import static org.jmolecules.eclipse.plugin.explorer.JavaModelUtils.isAnnotation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.eclipse.jdt.core.IAnnotation;
@@ -27,7 +29,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.IType;
-import org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept.Type;
+import org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept.Category;
 
 class JMolecules {
 
@@ -37,14 +39,8 @@ class JMolecules {
         concepts = init();
     }
 
-    <T extends IJavaElement> Optional<Concepts> expresses(T source) {
-        List<Concept> chosen = this.concepts.stream().filter(c -> c.test(source)).collect(toList());
-
-        Concepts concepts = null;
-        if (!chosen.isEmpty()) {
-            concepts = new Concepts(chosen);
-        }
-        return ofNullable(concepts);
+    <T extends IJavaElement> Concepts expresses(T source) {
+        return new Concepts(concepts.stream().filter(c -> c.test(source)).collect(toList()));
     }
 
     private static List<Concept> init() {
@@ -71,12 +67,26 @@ class JMolecules {
             return unmodifiableList(concepts);
         }
 
-        List<Type> types() {
-            return concepts.stream().map(Concept::getType).collect(toList());
+        Set<Category> getCategories() {
+            return concepts.stream().map(Concept::getCategory).collect(toSet());
+        }
+
+        boolean isEmpty() {
+            return concepts.isEmpty();
         }
 
         boolean contains(Concept concept) {
             return concepts.contains(concept);
+        }
+
+        Concepts merge(Concepts... sources) {
+            Set<Concept> collected = new HashSet<>(concepts);
+            stream(sources).forEach(s -> collected.addAll(s.get()));
+            return new Concepts(copyOf(collected));
+        }
+
+        static Concepts empty() {
+            return new Concepts(List.of());
         }
     }
 
@@ -84,7 +94,7 @@ class JMolecules {
 
         @Override
         default int compareTo(Concept other) {
-            int result = getType().compareTo(other.getType());
+            int result = getCategory().compareTo(other.getCategory());
             return result == 0 ? getName().compareTo(other.getName()) : result;
         }
 
@@ -92,9 +102,9 @@ class JMolecules {
             return getClass().getSimpleName();
         }
 
-        Type getType();
+        Category getCategory();
 
-        enum Type {
+        enum Category {
                 DDD, EVENTS, CQRS_ARCHITECTURE, LAYERED_ARCHITECTURE, ONION_ARCHITECTURE
         }
     }
@@ -121,7 +131,7 @@ class JMolecules {
     static class AggregateRoot implements AnnotationBasedConcept {
 
         @Override
-        public Type getType() {
+        public Category getCategory() {
             return DDD;
         }
 
@@ -143,7 +153,7 @@ class JMolecules {
     static class BoundedContext implements AnnotationBasedConcept {
 
         @Override
-        public Type getType() {
+        public Category getCategory() {
             return DDD;
         }
 
@@ -169,7 +179,7 @@ class JMolecules {
     static class Identity implements AnnotationBasedConcept {
 
         @Override
-        public Type getType() {
+        public Category getCategory() {
             return DDD;
         }
 
@@ -192,7 +202,7 @@ class JMolecules {
     static class Service implements AnnotationBasedConcept {
 
         @Override
-        public Type getType() {
+        public Category getCategory() {
             return DDD;
         }
 
@@ -215,7 +225,7 @@ class JMolecules {
     static class DomainEvent implements AnnotationBasedConcept {
 
         @Override
-        public Type getType() {
+        public Category getCategory() {
             return EVENTS;
         }
 
@@ -237,7 +247,7 @@ class JMolecules {
     static class DomainEventHandler implements AnnotationBasedConcept {
 
         @Override
-        public Type getType() {
+        public Category getCategory() {
             return EVENTS;
         }
 
@@ -260,7 +270,7 @@ class JMolecules {
     static class DomainRing implements AnnotationBasedConcept {
 
         @Override
-        public Type getType() {
+        public Category getCategory() {
             return ONION_ARCHITECTURE;
         }
 

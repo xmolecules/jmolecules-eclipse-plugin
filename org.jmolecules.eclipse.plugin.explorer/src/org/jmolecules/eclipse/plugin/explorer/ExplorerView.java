@@ -48,36 +48,8 @@ public class ExplorerView extends ViewPart {
     @Override
     public void createPartControl(Composite parent) {
         createControls(parent);
+        initializeInteractions(parent);
         registerSelectionListener();
-    }
-
-    private void createControls(Composite parent) {
-        container = new Composite(parent, NONE);
-        container.setLayoutData(new GridData(FILL_BOTH));
-        container.setLayout(new StackLayout());
-
-        label = new Label(container, NONE);
-        label.setText("Please select a Java project or a file contained in it to have this project analyzed.");
-
-        treeViewer = new TreeViewer(container, MULTI | H_SCROLL | V_SCROLL);
-        treeViewer.setContentProvider(new ExplorerContentProvider());
-        treeViewer.setLabelProvider(new ExplorerLabelProvider(imageProvider));
-        treeViewer.addDoubleClickListener(new ExplorerDoubleClickListener());
-        treeViewer.setComparator(new ExplorerComparator());
-        treeViewer.setUseHashlookup(true);
-        getSite().setSelectionProvider(treeViewer);
-
-        IActionBars actionBars = getViewSite().getActionBars();
-        Action collapseAllAction = explorerActions.collapseAllAction(treeViewer);
-
-        IToolBarManager toolbarManager = actionBars.getToolBarManager();
-        toolbarManager.add(collapseAllAction);
-
-        IMenuManager menuManager = actionBars.getMenuManager();
-        menuManager.add(collapseAllAction);
-
-        actionBars.clearGlobalActionHandlers();
-        show(label);
     }
 
     @Override
@@ -116,6 +88,38 @@ public class ExplorerView extends ViewPart {
         treeViewer.setInput(null);
         updateStatusLine(null);
         show(label);
+    }
+
+    private void createControls(Composite parent) {
+        container = new Composite(parent, NONE);
+        container.setLayoutData(new GridData(FILL_BOTH));
+        container.setLayout(new StackLayout());
+
+        label = new Label(container, NONE);
+        label.setText("Please select a Java project or a file contained in it to have this project analyzed.");
+
+        treeViewer = new TreeViewer(container, MULTI | H_SCROLL | V_SCROLL);
+        treeViewer.setContentProvider(new ExplorerContentProvider());
+        treeViewer.setLabelProvider(new ExplorerLabelProvider(imageProvider));
+        treeViewer.addDoubleClickListener(new ExplorerDoubleClickListener());
+        treeViewer.setComparator(new ExplorerComparator());
+        treeViewer.setUseHashlookup(true);
+        getSite().setSelectionProvider(treeViewer);
+
+        show(label);
+    }
+
+    private void initializeInteractions(Composite parent) {
+        IActionBars actionBars = getViewSite().getActionBars();
+        Action collapseAllAction = explorerActions.collapseAllAction(treeViewer);
+
+        IToolBarManager toolbarManager = actionBars.getToolBarManager();
+        toolbarManager.add(collapseAllAction);
+
+        IMenuManager menuManager = actionBars.getMenuManager();
+        menuManager.add(collapseAllAction);
+
+        actionBars.updateActionBars();
     }
 
     private void updateStatusLine(TreeNode tree) {

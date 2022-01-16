@@ -13,9 +13,12 @@ import javax.annotation.PostConstruct;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.custom.StackLayout;
@@ -23,6 +26,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 import org.jmolecules.eclipse.plugin.explorer.JMolecules.Concepts;
@@ -120,6 +124,32 @@ public class ExplorerView extends ViewPart {
         menuManager.add(collapseAllAction);
 
         actionBars.updateActionBars();
+
+        MenuManager menuMgr = new MenuManager();
+        menuMgr.setRemoveAllWhenShown(true);
+        menuMgr.addMenuListener(new IMenuListener() {
+
+            public void menuAboutToShow(IMenuManager mgr) {
+                fillContextMenu(mgr);
+            }
+        });
+
+        Menu menu = menuMgr.createContextMenu(treeViewer.getControl());
+        treeViewer.getControl().setMenu(menu);
+        getSite().registerContextMenu(menuMgr, treeViewer);
+    }
+
+    private void fillContextMenu(IMenuManager menuManager) {
+        Optional<IJavaElement> selection = Optional.of(treeViewer.getSelection()) //
+            .filter(IStructuredSelection.class::isInstance) //
+            .map(IStructuredSelection.class::cast) //
+            .filter(s -> s.size() == 1) //
+            .map(s -> s.getFirstElement()) //
+            .filter(TreeNode.class::isInstance) //
+            .map(TreeNode.class::cast) //
+            .map(TreeNode::getSource);
+
+        selection.ifPresent(s -> menuManager.add(explorerActions.showInEditorAction(s)));
     }
 
     private void updateStatusLine(TreeNode tree) {

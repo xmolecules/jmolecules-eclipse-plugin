@@ -4,6 +4,7 @@ import static org.eclipse.swt.SWT.H_SCROLL;
 import static org.eclipse.swt.SWT.MULTI;
 import static org.eclipse.swt.SWT.NONE;
 import static org.eclipse.swt.SWT.V_SCROLL;
+import static org.eclipse.swt.SWT.WRAP;
 import static org.eclipse.swt.layout.GridData.FILL_BOTH;
 
 import java.util.Optional;
@@ -99,7 +100,7 @@ public class ExplorerView extends ViewPart {
         container.setLayoutData(new GridData(FILL_BOTH));
         container.setLayout(new StackLayout());
 
-        label = new Label(container, NONE);
+        label = new Label(container, WRAP);
         label.setText("Please select a Java project or a file contained in it to have this project analyzed.");
 
         treeViewer = new TreeViewer(container, MULTI | H_SCROLL | V_SCROLL);

@@ -29,8 +29,9 @@
     </developers>
 
     <modules>
-        <module>org.jmolecules.eclipse.feature</module>
         <module>org.jmolecules.eclipse.plugin.explorer</module>
+        <module>org.jmolecules.eclipse.feature</module>
+        <module>org.jmolecules.eclipse.updatesite</module>
     </modules>
 
     <scm>
@@ -130,6 +131,11 @@
                     <artifactId>tycho-p2-director-plugin</artifactId>
                     <version>${tycho-version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-p2-publisher-plugin</artifactId>
+                    <version>${tycho-version}</version>
+                </plugin>        
                 <plugin>
                     <groupId>org.eclipse.tycho</groupId>
                     <artifactId>tycho-source-plugin</artifactId>

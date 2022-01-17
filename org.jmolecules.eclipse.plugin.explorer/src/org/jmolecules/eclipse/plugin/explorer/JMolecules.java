@@ -68,6 +68,7 @@ class JMolecules {
         concepts.add(new Identity());
         concepts.add(new Repository());
         concepts.add(new Service());
+        concepts.add(new ValueObject());
         concepts.add(new DomainEvent());
         concepts.add(new DomainEventHandler());
         concepts.add(new DomainRing());
@@ -303,6 +304,28 @@ class JMolecules {
             IImportDeclaration[] imports = getImports(compilationUnit);
 
             String fcqn = "org.jmolecules.ddd.annotation.Service";
+            return test(fcqn, imports, annotations);
+        }
+    }
+
+    static class ValueObject implements AnnotationBasedConcept {
+
+        @Override
+        public Category getCategory() {
+            return DDD;
+        }
+
+        @Override
+        public boolean test(IJavaElement source) {
+            if (!(source instanceof IType)) {
+                return false;
+            }
+
+            IType type = (IType) source;
+            IAnnotation[] annotations = getAnnotations(type);
+            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
+
+            String fcqn = "org.jmolecules.ddd.annotation.ValueObject";
             return test(fcqn, imports, annotations);
         }
     }

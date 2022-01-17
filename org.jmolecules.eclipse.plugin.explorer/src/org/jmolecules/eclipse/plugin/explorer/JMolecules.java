@@ -60,8 +60,10 @@ class JMolecules {
 
     private static List<Concept> init() {
         List<Concept> concepts = new ArrayList<>();
+        // DDD based concepts
         concepts.add(new AggregateRoot());
         concepts.add(new BoundedContext());
+        concepts.add(new Entity());
         concepts.add(new Identity());
         concepts.add(new Service());
         concepts.add(new DomainEvent());
@@ -187,6 +189,28 @@ class JMolecules {
             IImportDeclaration[] imports = getImports(type.getCompilationUnit());
 
             String fcqn = "org.jmolecules.ddd.annotation.BoundedContext";
+            return test(fcqn, imports, annotations);
+        }
+    }
+
+    static class Entity implements AnnotationBasedConcept {
+
+        @Override
+        public Category getCategory() {
+            return DDD;
+        }
+
+        @Override
+        public boolean test(IJavaElement source) {
+            if (!(source instanceof IType)) {
+                return false;
+            }
+
+            IType type = (IType) source;
+            IAnnotation[] annotations = getAnnotations(type);
+            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
+
+            String fcqn = "org.jmolecules.ddd.annotation.Entity";
             return test(fcqn, imports, annotations);
         }
     }

@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import org.eclipse.jdt.core.IAnnotatable;
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
@@ -185,10 +186,7 @@ class JMolecules {
                 return false;
             }
 
-            IAnnotation[] annotations = getAnnotations(type);
-            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
-
-            return test(fqcn, imports, annotations);
+            return isAnnotating(type.getCompilationUnit(), type, fqcn);
         }
 
         default boolean isFieldAnnotating(IJavaElement source, String fqcn) {
@@ -197,10 +195,7 @@ class JMolecules {
             }
 
             IField field = (IField) source;
-            IAnnotation[] annotations = getAnnotations(field);
-            IImportDeclaration[] imports = getImports(field.getCompilationUnit());
-
-            return test(fqcn, imports, annotations);
+            return isAnnotating(field.getCompilationUnit(), field, fqcn);
         }
 
         default boolean isMethodAnnotating(IJavaElement source, String fqcn) {
@@ -209,10 +204,7 @@ class JMolecules {
             }
 
             IMethod method = (IMethod) source;
-            IAnnotation[] annotations = getAnnotations(method);
-            IImportDeclaration[] imports = getImports(method.getCompilationUnit());
-
-            return test(fqcn, imports, annotations);
+            return isAnnotating(method.getCompilationUnit(), method, fqcn);
         }
 
         default boolean isPackageAnnotating(IJavaElement source, String fqcn) {
@@ -221,11 +213,7 @@ class JMolecules {
             }
 
             IPackageDeclaration packageDeclaration = (IPackageDeclaration) source;
-            IAnnotation[] annotations = getAnnotations(packageDeclaration);
-            ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
-            IImportDeclaration[] imports = getImports(compilationUnit);
-
-            return test(fqcn, imports, annotations);
+            return isAnnotating((ICompilationUnit) packageDeclaration.getParent(), packageDeclaration, fqcn);
         }
 
         default boolean isTypeAnnotating(IJavaElement source, String fqcn) {
@@ -234,19 +222,18 @@ class JMolecules {
             }
 
             IType type = (IType) source;
-            IAnnotation[] annotations = getAnnotations(type);
-            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
-
-            return test(fqcn, imports, annotations);
+            return isAnnotating(type.getCompilationUnit(), type, fqcn);
         }
 
-        default boolean test(String fcqn, IImportDeclaration[] imports, IAnnotation[] annotations) {
-            if (stream(annotations).anyMatch(a -> a.getElementName().equals(fcqn))) {
+        private boolean isAnnotating(ICompilationUnit compilationUnit, IAnnotatable annotatable, String fqcn) {
+            IAnnotation[] annotations = getAnnotations(annotatable);
+            if (stream(annotations).anyMatch(a -> a.getElementName().equals(fqcn))) {
                 return true;
             }
 
-            String pckg = substringBeforeLast(fcqn, ".").concat(".");
-            String name = substringAfterLast(fcqn, ".");
+            IImportDeclaration[] imports = getImports(compilationUnit);
+            String pckg = substringBeforeLast(fqcn, ".").concat(".");
+            String name = substringAfterLast(fqcn, ".");
 
             return stream(imports).anyMatch(i -> i.getElementName().startsWith(pckg))
                     && (stream(annotations).anyMatch(a -> a.getElementName().equals(name)));

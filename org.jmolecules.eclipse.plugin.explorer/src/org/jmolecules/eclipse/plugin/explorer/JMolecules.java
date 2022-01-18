@@ -67,6 +67,7 @@ class JMolecules {
         List<Concept> concepts = new ArrayList<>();
         // DDD based concepts
         concepts.add(new AggregateRoot());
+        concepts.add(new Association());
         concepts.add(new BoundedContext());
         concepts.add(new Entity());
         concepts.add(new Factory());

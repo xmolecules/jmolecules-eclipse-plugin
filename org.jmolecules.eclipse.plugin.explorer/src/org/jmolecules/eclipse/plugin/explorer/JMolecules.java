@@ -23,6 +23,7 @@ import static java.util.stream.Collectors.toSet;
 
 import static org.apache.commons.lang.StringUtils.substringAfterLast;
 import static org.apache.commons.lang.StringUtils.substringBeforeLast;
+import static org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept.Category.CQRS_ARCHITECTURE;
 import static org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept.Category.DDD;
 import static org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept.Category.EVENTS;
 import static org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept.Category.ONION_ARCHITECTURE;
@@ -75,6 +76,9 @@ class JMolecules {
         concepts.add(new DomainEvent());
         concepts.add(new DomainEventHandler());
         concepts.add(new DomainEventPublisher());
+
+        // CQRS Architecture based concepts
+        concepts.add(new Command());
         concepts.add(new DomainRing());
         return concepts;
     }
@@ -460,6 +464,28 @@ class JMolecules {
             IAnnotation[] annotations = getAnnotations(type);
             IImportDeclaration[] imports = getImports(type.getCompilationUnit());
 
+            return test(fcqn, imports, annotations);
+        }
+    }
+
+    static class Command implements AnnotationBasedConcept {
+
+        @Override
+        public Category getCategory() {
+            return CQRS_ARCHITECTURE;
+        }
+
+        @Override
+        public boolean test(IJavaElement source) {
+            if (!(source instanceof IType)) {
+                return false;
+            }
+
+            IType type = (IType) source;
+            IAnnotation[] annotations = getAnnotations(type);
+            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
+
+            String fcqn = "org.jmolecules.architecture.cqrs.annotation.Command";
             return test(fcqn, imports, annotations);
         }
     }

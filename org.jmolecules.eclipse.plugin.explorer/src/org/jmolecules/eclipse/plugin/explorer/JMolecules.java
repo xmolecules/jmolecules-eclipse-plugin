@@ -66,6 +66,7 @@ class JMolecules {
         concepts.add(new Entity());
         concepts.add(new Factory());
         concepts.add(new Identity());
+        concepts.add(new Module());
         concepts.add(new Repository());
         concepts.add(new Service());
         concepts.add(new ValueObject());
@@ -259,6 +260,49 @@ class JMolecules {
             IImportDeclaration[] imports = getImports(compilationUnit);
 
             String fcqn = "org.jmolecules.ddd.annotation.Identity";
+            return test(fcqn, imports, annotations);
+        }
+    }
+
+    static class Module implements AnnotationBasedConcept {
+
+        @Override
+        public Category getCategory() {
+            return DDD;
+        }
+
+        @Override
+        public boolean test(IJavaElement source) {
+            String fcqn = "org.jmolecules.ddd.annotation.Module";
+            return testPackage(fcqn, source) || testAnnotation(fcqn, source);
+        }
+
+        private boolean testPackage(String fcqn, IJavaElement source) {
+            if (!(source instanceof IPackageDeclaration)) {
+                return false;
+            }
+
+            IPackageDeclaration packageDeclaration = (IPackageDeclaration) source;
+            IAnnotation[] annotations = getAnnotations(packageDeclaration);
+            ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
+            IImportDeclaration[] imports = getImports(compilationUnit);
+
+            return test(fcqn, imports, annotations);
+        }
+
+        private boolean testAnnotation(String fcqn, IJavaElement source) {
+            if (!(source instanceof IType)) {
+                return false;
+            }
+
+            IType type = (IType) source;
+            if (!isAnnotation(type)) {
+                return false;
+            }
+
+            IAnnotation[] annotations = getAnnotations(type);
+            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
+
             return test(fcqn, imports, annotations);
         }
     }

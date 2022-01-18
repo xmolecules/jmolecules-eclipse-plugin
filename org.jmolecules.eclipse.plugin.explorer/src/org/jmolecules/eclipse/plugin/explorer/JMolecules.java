@@ -421,7 +421,7 @@ class JMolecules {
         }
     }
 
-    static class DomainEvent implements AnnotationBasedConcept {
+    static class DomainEvent implements AnnotationBasedConcept, TypeBasedConcept {
 
         @Override
         public Category getCategory() {
@@ -430,7 +430,8 @@ class JMolecules {
 
         @Override
         public boolean test(IJavaElement source) {
-            return isTypeAnnotating(source, "org.jmolecules.event.annotation.DomainEvent");
+            return isTypeAnnotating(source, "org.jmolecules.event.annotation.DomainEvent")
+                    || isTypeImplementing(source, "org.jmolecules.event.types.DomainEvent");
         }
     }
 

@@ -407,7 +407,7 @@ class JMolecules {
         }
     }
 
-    static class ValueObject implements AnnotationBasedConcept {
+    static class ValueObject implements AnnotationBasedConcept, TypeBasedConcept {
 
         @Override
         public Category getCategory() {
@@ -416,7 +416,8 @@ class JMolecules {
 
         @Override
         public boolean test(IJavaElement source) {
-            return isTypeAnnotating(source, "org.jmolecules.ddd.annotation.ValueObject");
+            return isTypeAnnotating(source, "org.jmolecules.ddd.annotation.ValueObject")
+                    || isTypeImplementing(source, "org.jmolecules.ddd.types.ValueObject");
         }
     }
 

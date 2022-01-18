@@ -72,6 +72,7 @@ class JMolecules {
         concepts.add(new Entity());
         concepts.add(new Factory());
         concepts.add(new Identifiable());
+        concepts.add(new Identifier());
         concepts.add(new Identity());
         concepts.add(new Module());
         concepts.add(new Repository());
@@ -335,6 +336,19 @@ class JMolecules {
         @Override
         public boolean test(IJavaElement source) {
             return isTypeImplementing(source, "org.jmolecules.ddd.types.Identifiable");
+        }
+    }
+
+    static class Identifier implements TypeBasedConcept {
+
+        @Override
+        public Category getCategory() {
+            return DDD;
+        }
+
+        @Override
+        public boolean test(IJavaElement source) {
+            return isTypeImplementing(source, "org.jmolecules.ddd.types.Identifier");
         }
     }
 

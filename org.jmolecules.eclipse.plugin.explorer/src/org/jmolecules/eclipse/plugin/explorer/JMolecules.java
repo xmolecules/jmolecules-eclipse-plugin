@@ -296,7 +296,7 @@ class JMolecules {
         }
     }
 
-    static class Entity implements AnnotationBasedConcept {
+    static class Entity implements AnnotationBasedConcept, TypeBasedConcept {
 
         @Override
         public Category getCategory() {
@@ -305,7 +305,8 @@ class JMolecules {
 
         @Override
         public boolean test(IJavaElement source) {
-            return isTypeAnnotating(source, "org.jmolecules.ddd.annotation.Entity");
+            return isTypeAnnotating(source, "org.jmolecules.ddd.annotation.Entity")
+                    || isTypeImplementing(source, "org.jmolecules.ddd.types.Entity");
         }
     }
 

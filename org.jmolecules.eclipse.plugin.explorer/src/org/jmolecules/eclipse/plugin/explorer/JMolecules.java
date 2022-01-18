@@ -269,6 +269,19 @@ class JMolecules {
         }
     }
 
+    static class Association implements TypeBasedConcept {
+
+        @Override
+        public Category getCategory() {
+            return DDD;
+        }
+
+        @Override
+        public boolean test(IJavaElement source) {
+            return isTypeImplementing(source, "org.jmolecules.ddd.types.Association");
+        }
+    }
+
     static class BoundedContext implements AnnotationBasedConcept {
 
         @Override

@@ -380,7 +380,7 @@ class JMolecules {
         }
     }
 
-    static class Repository implements AnnotationBasedConcept {
+    static class Repository implements AnnotationBasedConcept, TypeBasedConcept {
 
         @Override
         public Category getCategory() {
@@ -389,7 +389,8 @@ class JMolecules {
 
         @Override
         public boolean test(IJavaElement source) {
-            return isTypeAnnotating(source, "org.jmolecules.ddd.annotation.Repository");
+            return isTypeAnnotating(source, "org.jmolecules.ddd.annotation.Repository")
+                    || isTypeImplementing(source, "org.jmolecules.ddd.types.Repository");
         }
     }
 

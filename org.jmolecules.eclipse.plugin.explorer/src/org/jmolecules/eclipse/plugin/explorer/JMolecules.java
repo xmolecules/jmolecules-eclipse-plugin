@@ -175,6 +175,18 @@ class JMolecules {
 
     static interface AnnotationBasedConcept extends Concept {
 
+        default boolean isTypeAnnotating(IJavaElement source, String fqcn) {
+            if (!(source instanceof IType)) {
+                return false;
+            }
+
+            IType type = (IType) source;
+            IAnnotation[] annotations = getAnnotations(type);
+            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
+
+            return test(fqcn, imports, annotations);
+        }
+
         default boolean test(String fcqn, IImportDeclaration[] imports, IAnnotation[] annotations) {
             if (stream(annotations).anyMatch(a -> a.getElementName().equals(fcqn))) {
                 return true;
@@ -214,18 +226,6 @@ class JMolecules {
         public boolean test(IJavaElement source) {
             return isTypeAnnotating(source, "org.jmolecules.ddd.annotation.AggregateRoot")
                     || isTypeImplementing(source, "org.jmolecules.ddd.types.AggregateRoot");
-        }
-
-        private boolean isTypeAnnotating(IJavaElement source, String fqcn) {
-            if (!(source instanceof IType)) {
-                return false;
-            }
-
-            IType type = (IType) source;
-            IAnnotation[] annotations = getAnnotations(type);
-            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
-
-            return test(fqcn, imports, annotations);
         }
     }
 

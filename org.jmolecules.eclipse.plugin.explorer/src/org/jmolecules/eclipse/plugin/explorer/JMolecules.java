@@ -206,6 +206,24 @@ class JMolecules {
 
         @Override
         public boolean test(IJavaElement source) {
+            String fcqn = "org.jmolecules.ddd.annotation.BoundedContext";
+            return testPackage(fcqn, source) || testAnnotation(fcqn, source);
+        }
+
+        private boolean testPackage(String fcqn, IJavaElement source) {
+            if (!(source instanceof IPackageDeclaration)) {
+                return false;
+            }
+
+            IPackageDeclaration packageDeclaration = (IPackageDeclaration) source;
+            IAnnotation[] annotations = getAnnotations(packageDeclaration);
+            ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
+            IImportDeclaration[] imports = getImports(compilationUnit);
+
+            return test(fcqn, imports, annotations);
+        }
+
+        private boolean testAnnotation(String fcqn, IJavaElement source) {
             if (!(source instanceof IType)) {
                 return false;
             }
@@ -218,7 +236,6 @@ class JMolecules {
             IAnnotation[] annotations = getAnnotations(type);
             IImportDeclaration[] imports = getImports(type.getCompilationUnit());
 
-            String fcqn = "org.jmolecules.ddd.annotation.BoundedContext";
             return test(fcqn, imports, annotations);
         }
     }

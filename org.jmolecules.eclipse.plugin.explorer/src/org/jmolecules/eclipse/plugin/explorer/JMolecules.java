@@ -1048,6 +1048,11 @@ class JMolecules {
 
         @Override
         public boolean test(IJavaElement source) {
+            String fcqn = "org.jmolecules.architecture.onion.simplified.DomainRing";
+            return testPackage(fcqn, source) || testType(fcqn, source);
+        }
+
+        private boolean testPackage(String fcqn, IJavaElement source) {
             if (!(source instanceof IPackageDeclaration)) {
                 return false;
             }
@@ -1057,7 +1062,18 @@ class JMolecules {
             ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
             IImportDeclaration[] imports = getImports(compilationUnit);
 
-            String fcqn = "org.jmolecules.architecture.onion.simplified.DomainRing";
+            return test(fcqn, imports, annotations);
+        }
+
+        private boolean testType(String fcqn, IJavaElement source) {
+            if (!(source instanceof IType)) {
+                return false;
+            }
+
+            IType type = (IType) source;
+            IAnnotation[] annotations = getAnnotations(type);
+            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
+
             return test(fcqn, imports, annotations);
         }
     }

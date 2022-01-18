@@ -191,6 +191,30 @@ class JMolecules {
             return test(fqcn, imports, annotations);
         }
 
+        default boolean isFieldAnnotating(IJavaElement source, String fqcn) {
+            if (!(source instanceof IField)) {
+                return false;
+            }
+
+            IField field = (IField) source;
+            IAnnotation[] annotations = getAnnotations(field);
+            IImportDeclaration[] imports = getImports(field.getCompilationUnit());
+
+            return test(fqcn, imports, annotations);
+        }
+
+        default boolean isMethodAnnotating(IJavaElement source, String fqcn) {
+            if (!(source instanceof IMethod)) {
+                return false;
+            }
+
+            IMethod method = (IMethod) source;
+            IAnnotation[] annotations = getAnnotations(method);
+            IImportDeclaration[] imports = getImports(method.getCompilationUnit());
+
+            return test(fqcn, imports, annotations);
+        }
+
         default boolean isPackageAnnotating(IJavaElement source, String fqcn) {
             if (!(source instanceof IPackageDeclaration)) {
                 return false;
@@ -307,48 +331,8 @@ class JMolecules {
 
         @Override
         public boolean test(IJavaElement source) {
-            String fcqn = "org.jmolecules.ddd.annotation.Identity";
-            return testField(fcqn, source) || testMethod(fcqn, source) || testAnnotation(fcqn, source);
-        }
-
-        private boolean testField(String fcqn, IJavaElement source) {
-            if (!(source instanceof IField)) {
-                return false;
-            }
-
-            IField field = (IField) source;
-            IAnnotation[] annotations = getAnnotations(field);
-            IImportDeclaration[] imports = getImports(field.getCompilationUnit());
-
-            return test(fcqn, imports, annotations);
-        }
-
-        private boolean testMethod(String fcqn, IJavaElement source) {
-            if (!(source instanceof IMethod)) {
-                return false;
-            }
-
-            IMethod method = (IMethod) source;
-            IAnnotation[] annotations = getAnnotations(method);
-            IImportDeclaration[] imports = getImports(method.getCompilationUnit());
-
-            return test(fcqn, imports, annotations);
-        }
-
-        private boolean testAnnotation(String fcqn, IJavaElement source) {
-            if (!(source instanceof IType)) {
-                return false;
-            }
-
-            IType type = (IType) source;
-            if (!isAnnotation(type)) {
-                return false;
-            }
-
-            IAnnotation[] annotations = getAnnotations(type);
-            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
-
-            return test(fcqn, imports, annotations);
+            String fqcn = "org.jmolecules.ddd.annotation.Identity";
+            return isFieldAnnotating(source, fqcn) || isMethodAnnotating(source, fqcn) || isAnnotationAnnotating(source, fqcn);
         }
     }
 

@@ -70,8 +70,11 @@ class JMolecules {
         concepts.add(new Repository());
         concepts.add(new Service());
         concepts.add(new ValueObject());
+
+        // Event based concepts
         concepts.add(new DomainEvent());
         concepts.add(new DomainEventHandler());
+        concepts.add(new DomainEventPublisher());
         concepts.add(new DomainRing());
         return concepts;
     }
@@ -415,6 +418,48 @@ class JMolecules {
             IImportDeclaration[] imports = getImports(compilationUnit);
 
             String fcqn = "org.jmolecules.event.annotation.DomainEventHandler";
+            return test(fcqn, imports, annotations);
+        }
+    }
+
+    static class DomainEventPublisher implements AnnotationBasedConcept {
+
+        @Override
+        public Category getCategory() {
+            return EVENTS;
+        }
+
+        @Override
+        public boolean test(IJavaElement source) {
+            String fcqn = "org.jmolecules.event.annotation.DomainEventPublisher";
+            return testMethod(fcqn, source) || testAnnotation(fcqn, source);
+        }
+
+        private boolean testMethod(String fcqn, IJavaElement source) {
+            if (!(source instanceof IMethod)) {
+                return false;
+            }
+
+            IMethod method = (IMethod) source;
+            IAnnotation[] annotations = getAnnotations(method);
+            IImportDeclaration[] imports = getImports(method.getCompilationUnit());
+
+            return test(fcqn, imports, annotations);
+        }
+
+        private boolean testAnnotation(String fcqn, IJavaElement source) {
+            if (!(source instanceof IType)) {
+                return false;
+            }
+
+            IType type = (IType) source;
+            if (!isAnnotation(type)) {
+                return false;
+            }
+
+            IAnnotation[] annotations = getAnnotations(type);
+            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
+
             return test(fcqn, imports, annotations);
         }
     }

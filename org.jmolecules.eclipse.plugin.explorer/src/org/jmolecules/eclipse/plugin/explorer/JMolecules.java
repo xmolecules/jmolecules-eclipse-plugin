@@ -152,7 +152,22 @@ class JMolecules {
         Category getCategory();
 
         enum Category {
-                DDD, EVENTS, CQRS_ARCHITECTURE, LAYERED_ARCHITECTURE, ONION_ARCHITECTURE
+
+                DDD("DDD"), //
+                EVENTS("Events"), //
+                CQRS_ARCHITECTURE("CQRS-Architecture"), //
+                LAYERED_ARCHITECTURE("Layered-Architecture"), //
+                ONION_ARCHITECTURE("Onion-Architecture");
+
+            private final String humanReadable;
+
+            private Category(String humanReadable) {
+                this.humanReadable = humanReadable;
+            }
+
+            String humanReadable() {
+                return humanReadable;
+            }
         }
     }
 

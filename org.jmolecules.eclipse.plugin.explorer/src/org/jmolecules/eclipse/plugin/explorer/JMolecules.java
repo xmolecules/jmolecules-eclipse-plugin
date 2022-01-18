@@ -418,8 +418,7 @@ class JMolecules {
 
             IType type = (IType) source;
             IAnnotation[] annotations = getAnnotations(type);
-            ICompilationUnit compilationUnit = (ICompilationUnit) type.getCompilationUnit();
-            IImportDeclaration[] imports = getImports(compilationUnit);
+            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
 
             String fcqn = "org.jmolecules.ddd.annotation.Service";
             return test(fcqn, imports, annotations);
@@ -1077,7 +1076,7 @@ class JMolecules {
             return test(fcqn, imports, annotations);
         }
     }
-    
+
     static class SimplifiedInfrastructureRing implements AnnotationBasedConcept {
 
         @Override

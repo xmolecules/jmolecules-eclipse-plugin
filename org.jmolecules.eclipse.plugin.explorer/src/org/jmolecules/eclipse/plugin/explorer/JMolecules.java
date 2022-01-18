@@ -81,6 +81,7 @@ class JMolecules {
         concepts.add(new Command());
         concepts.add(new CommandDispatcher());
         concepts.add(new CommandHandler());
+        concepts.add(new QueryModel());
         concepts.add(new DomainRing());
         return concepts;
     }
@@ -572,6 +573,28 @@ class JMolecules {
             IAnnotation[] annotations = getAnnotations(type);
             IImportDeclaration[] imports = getImports(type.getCompilationUnit());
 
+            return test(fcqn, imports, annotations);
+        }
+    }
+
+    static class QueryModel implements AnnotationBasedConcept {
+
+        @Override
+        public Category getCategory() {
+            return CQRS_ARCHITECTURE;
+        }
+
+        @Override
+        public boolean test(IJavaElement source) {
+            if (!(source instanceof IType)) {
+                return false;
+            }
+
+            IType type = (IType) source;
+            IAnnotation[] annotations = getAnnotations(type);
+            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
+
+            String fcqn = "org.jmolecules.architecture.cqrs.annotation.QueryModel";
             return test(fcqn, imports, annotations);
         }
     }

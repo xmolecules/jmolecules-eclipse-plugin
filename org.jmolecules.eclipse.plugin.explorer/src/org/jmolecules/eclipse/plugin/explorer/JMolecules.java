@@ -31,6 +31,7 @@ import static org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept.Category
 import static org.jmolecules.eclipse.plugin.explorer.JavaModelUtils.getAnnotations;
 import static org.jmolecules.eclipse.plugin.explorer.JavaModelUtils.getImports;
 import static org.jmolecules.eclipse.plugin.explorer.JavaModelUtils.isAnnotation;
+import static org.jmolecules.eclipse.plugin.explorer.JavaModelUtils.supertypeHierarchy;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -46,6 +47,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.ITypeHierarchy;
 import org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept.Category;
 
 class JMolecules {
@@ -187,10 +189,21 @@ class JMolecules {
     }
 
     static interface TypeBasedConcept extends Concept {
-        // FIXME implement me... :)
+
+        default boolean isTypeImplementing(IJavaElement source, String fqcn) {
+            if (!(source instanceof IType)) {
+                return false;
+            }
+
+            IType type = (IType) source;
+            ITypeHierarchy hierarchy = supertypeHierarchy(type);
+            IType[] interfaces = hierarchy.getAllInterfaces();
+
+            return stream(interfaces).anyMatch(i -> i.getFullyQualifiedName().equals(fqcn));
+        }
     }
 
-    static class AggregateRoot implements AnnotationBasedConcept {
+    static class AggregateRoot implements AnnotationBasedConcept, TypeBasedConcept {
 
         @Override
         public Category getCategory() {
@@ -199,6 +212,11 @@ class JMolecules {
 
         @Override
         public boolean test(IJavaElement source) {
+            return isTypeAnnotating(source, "org.jmolecules.ddd.annotation.AggregateRoot")
+                    || isTypeImplementing(source, "org.jmolecules.ddd.types.AggregateRoot");
+        }
+
+        private boolean isTypeAnnotating(IJavaElement source, String fqcn) {
             if (!(source instanceof IType)) {
                 return false;
             }
@@ -207,8 +225,7 @@ class JMolecules {
             IAnnotation[] annotations = getAnnotations(type);
             IImportDeclaration[] imports = getImports(type.getCompilationUnit());
 
-            String fcqn = "org.jmolecules.ddd.annotation.AggregateRoot";
-            return test(fcqn, imports, annotations);
+            return test(fqcn, imports, annotations);
         }
     }
 

@@ -18,6 +18,7 @@ package org.jmolecules.eclipse.plugin.explorer;
 import static org.eclipse.jdt.core.IPackageFragmentRoot.K_SOURCE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IAnnotatable;
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -142,6 +143,10 @@ final class JavaModelUtils {
 
     static boolean isPackageInfo(ICompilationUnit model) {
         return PACKAGE_INFO_FILENAME.equals(model.getElementName());
+    }
+
+    static ITypeHierarchy supertypeHierarchy(IType model) {
+        return supertypeHierarchy(model, new NullProgressMonitor());
     }
 
     static ITypeHierarchy supertypeHierarchy(IType model, IProgressMonitor progressMonitor) {

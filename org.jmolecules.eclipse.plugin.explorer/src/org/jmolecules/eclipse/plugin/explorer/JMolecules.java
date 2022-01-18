@@ -85,6 +85,7 @@ class JMolecules {
 
         // Layered Architecture based concepts
         concepts.add(new ApplicationLayer());
+        concepts.add(new DomainLayer());
         concepts.add(new DomainRing());
         return concepts;
     }
@@ -640,6 +641,45 @@ class JMolecules {
             return test(fcqn, imports, annotations);
         }
 
+    }
+
+    static class DomainLayer implements AnnotationBasedConcept {
+
+        @Override
+        public Category getCategory() {
+            return LAYERED_ARCHITECTURE;
+        }
+
+        @Override
+        public boolean test(IJavaElement source) {
+            String fcqn = "org.jmolecules.architecture.layered.DomainLayer";
+            return testPackage(fcqn, source) || testType(fcqn, source);
+        }
+
+        private boolean testPackage(String fcqn, IJavaElement source) {
+            if (!(source instanceof IPackageDeclaration)) {
+                return false;
+            }
+
+            IPackageDeclaration packageDeclaration = (IPackageDeclaration) source;
+            IAnnotation[] annotations = getAnnotations(packageDeclaration);
+            ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
+            IImportDeclaration[] imports = getImports(compilationUnit);
+
+            return test(fcqn, imports, annotations);
+        }
+
+        private boolean testType(String fcqn, IJavaElement source) {
+            if (!(source instanceof IType)) {
+                return false;
+            }
+
+            IType type = (IType) source;
+            IAnnotation[] annotations = getAnnotations(type);
+            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
+
+            return test(fcqn, imports, annotations);
+        }
     }
 
     static class DomainRing implements AnnotationBasedConcept {

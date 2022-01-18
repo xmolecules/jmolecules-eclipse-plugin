@@ -281,16 +281,7 @@ class JMolecules {
 
         @Override
         public boolean test(IJavaElement source) {
-            if (!(source instanceof IType)) {
-                return false;
-            }
-
-            IType type = (IType) source;
-            IAnnotation[] annotations = getAnnotations(type);
-            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
-
-            String fcqn = "org.jmolecules.ddd.annotation.Entity";
-            return test(fcqn, imports, annotations);
+            return isTypeAnnotating(source, "org.jmolecules.ddd.annotation.Entity");
         }
     }
 

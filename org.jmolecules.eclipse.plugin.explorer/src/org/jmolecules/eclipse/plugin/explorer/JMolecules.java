@@ -345,37 +345,8 @@ class JMolecules {
 
         @Override
         public boolean test(IJavaElement source) {
-            String fcqn = "org.jmolecules.ddd.annotation.Module";
-            return testPackage(fcqn, source) || testAnnotation(fcqn, source);
-        }
-
-        private boolean testPackage(String fcqn, IJavaElement source) {
-            if (!(source instanceof IPackageDeclaration)) {
-                return false;
-            }
-
-            IPackageDeclaration packageDeclaration = (IPackageDeclaration) source;
-            IAnnotation[] annotations = getAnnotations(packageDeclaration);
-            ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
-            IImportDeclaration[] imports = getImports(compilationUnit);
-
-            return test(fcqn, imports, annotations);
-        }
-
-        private boolean testAnnotation(String fcqn, IJavaElement source) {
-            if (!(source instanceof IType)) {
-                return false;
-            }
-
-            IType type = (IType) source;
-            if (!isAnnotation(type)) {
-                return false;
-            }
-
-            IAnnotation[] annotations = getAnnotations(type);
-            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
-
-            return test(fcqn, imports, annotations);
+            String fqcn = "org.jmolecules.ddd.annotation.Module";
+            return isPackageAnnotating(source, fqcn) || isAnnotationAnnotating(source, fqcn);
         }
     }
 
@@ -440,36 +411,8 @@ class JMolecules {
 
         @Override
         public boolean test(IJavaElement source) {
-            String fcqn = "org.jmolecules.event.annotation.DomainEventHandler";
-            return testMethod(fcqn, source) || testAnnotation(fcqn, source);
-        }
-
-        private boolean testMethod(String fcqn, IJavaElement source) {
-            if (!(source instanceof IMethod)) {
-                return false;
-            }
-
-            IMethod method = (IMethod) source;
-            IAnnotation[] annotations = getAnnotations(method);
-            IImportDeclaration[] imports = getImports(method.getCompilationUnit());
-
-            return test(fcqn, imports, annotations);
-        }
-
-        private boolean testAnnotation(String fcqn, IJavaElement source) {
-            if (!(source instanceof IType)) {
-                return false;
-            }
-
-            IType type = (IType) source;
-            if (!isAnnotation(type)) {
-                return false;
-            }
-
-            IAnnotation[] annotations = getAnnotations(type);
-            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
-
-            return test(fcqn, imports, annotations);
+            String fqcn = "org.jmolecules.event.annotation.DomainEventHandler";
+            return isMethodAnnotating(source, fqcn) || isAnnotationAnnotating(source, fqcn);
         }
     }
 
@@ -482,36 +425,8 @@ class JMolecules {
 
         @Override
         public boolean test(IJavaElement source) {
-            String fcqn = "org.jmolecules.event.annotation.DomainEventPublisher";
-            return testMethod(fcqn, source) || testAnnotation(fcqn, source);
-        }
-
-        private boolean testMethod(String fcqn, IJavaElement source) {
-            if (!(source instanceof IMethod)) {
-                return false;
-            }
-
-            IMethod method = (IMethod) source;
-            IAnnotation[] annotations = getAnnotations(method);
-            IImportDeclaration[] imports = getImports(method.getCompilationUnit());
-
-            return test(fcqn, imports, annotations);
-        }
-
-        private boolean testAnnotation(String fcqn, IJavaElement source) {
-            if (!(source instanceof IType)) {
-                return false;
-            }
-
-            IType type = (IType) source;
-            if (!isAnnotation(type)) {
-                return false;
-            }
-
-            IAnnotation[] annotations = getAnnotations(type);
-            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
-
-            return test(fcqn, imports, annotations);
+            String fqcn = "org.jmolecules.event.annotation.DomainEventPublisher";
+            return isMethodAnnotating(source, fqcn) || isAnnotationAnnotating(source, fqcn);
         }
     }
 
@@ -537,36 +452,8 @@ class JMolecules {
 
         @Override
         public boolean test(IJavaElement source) {
-            String fcqn = "org.jmolecules.architecture.cqrs.annotation.CommandDispatcher";
-            return testMethod(fcqn, source) || testAnnotation(fcqn, source);
-        }
-
-        private boolean testMethod(String fcqn, IJavaElement source) {
-            if (!(source instanceof IMethod)) {
-                return false;
-            }
-
-            IMethod method = (IMethod) source;
-            IAnnotation[] annotations = getAnnotations(method);
-            IImportDeclaration[] imports = getImports(method.getCompilationUnit());
-
-            return test(fcqn, imports, annotations);
-        }
-
-        private boolean testAnnotation(String fcqn, IJavaElement source) {
-            if (!(source instanceof IType)) {
-                return false;
-            }
-
-            IType type = (IType) source;
-            if (!isAnnotation(type)) {
-                return false;
-            }
-
-            IAnnotation[] annotations = getAnnotations(type);
-            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
-
-            return test(fcqn, imports, annotations);
+            String fqcn = "org.jmolecules.architecture.cqrs.annotation.CommandDispatcher";
+            return isMethodAnnotating(source, fqcn) || isAnnotationAnnotating(source, fqcn);
         }
     }
 
@@ -579,36 +466,8 @@ class JMolecules {
 
         @Override
         public boolean test(IJavaElement source) {
-            String fcqn = "org.jmolecules.architecture.cqrs.annotation.CommandHandler";
-            return testMethod(fcqn, source) || testAnnotation(fcqn, source);
-        }
-
-        private boolean testMethod(String fcqn, IJavaElement source) {
-            if (!(source instanceof IMethod)) {
-                return false;
-            }
-
-            IMethod method = (IMethod) source;
-            IAnnotation[] annotations = getAnnotations(method);
-            IImportDeclaration[] imports = getImports(method.getCompilationUnit());
-
-            return test(fcqn, imports, annotations);
-        }
-
-        private boolean testAnnotation(String fcqn, IJavaElement source) {
-            if (!(source instanceof IType)) {
-                return false;
-            }
-
-            IType type = (IType) source;
-            if (!isAnnotation(type)) {
-                return false;
-            }
-
-            IAnnotation[] annotations = getAnnotations(type);
-            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
-
-            return test(fcqn, imports, annotations);
+            String fqcn = "org.jmolecules.architecture.cqrs.annotation.CommandHandler";
+            return isMethodAnnotating(source, fqcn) || isAnnotationAnnotating(source, fqcn);
         }
     }
 
@@ -635,20 +494,7 @@ class JMolecules {
         @Override
         public boolean test(IJavaElement source) {
             String fqcn = "org.jmolecules.architecture.layered.ApplicationLayer";
-            return testPackage(fqcn, source) || isTypeAnnotating(source, fqcn);
-        }
-
-        private boolean testPackage(String fcqn, IJavaElement source) {
-            if (!(source instanceof IPackageDeclaration)) {
-                return false;
-            }
-
-            IPackageDeclaration packageDeclaration = (IPackageDeclaration) source;
-            IAnnotation[] annotations = getAnnotations(packageDeclaration);
-            ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
-            IImportDeclaration[] imports = getImports(compilationUnit);
-
-            return test(fcqn, imports, annotations);
+            return isPackageAnnotating(source, fqcn) || isTypeAnnotating(source, fqcn);
         }
     }
 
@@ -662,20 +508,7 @@ class JMolecules {
         @Override
         public boolean test(IJavaElement source) {
             String fqcn = "org.jmolecules.architecture.layered.DomainLayer";
-            return testPackage(fqcn, source) || isTypeAnnotating(source, fqcn);
-        }
-
-        private boolean testPackage(String fcqn, IJavaElement source) {
-            if (!(source instanceof IPackageDeclaration)) {
-                return false;
-            }
-
-            IPackageDeclaration packageDeclaration = (IPackageDeclaration) source;
-            IAnnotation[] annotations = getAnnotations(packageDeclaration);
-            ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
-            IImportDeclaration[] imports = getImports(compilationUnit);
-
-            return test(fcqn, imports, annotations);
+            return isPackageAnnotating(source, fqcn) || isTypeAnnotating(source, fqcn);
         }
     }
 
@@ -689,20 +522,7 @@ class JMolecules {
         @Override
         public boolean test(IJavaElement source) {
             String fqcn = "org.jmolecules.architecture.layered.InfrastructureLayer";
-            return testPackage(fqcn, source) || isTypeAnnotating(source, fqcn);
-        }
-
-        private boolean testPackage(String fcqn, IJavaElement source) {
-            if (!(source instanceof IPackageDeclaration)) {
-                return false;
-            }
-
-            IPackageDeclaration packageDeclaration = (IPackageDeclaration) source;
-            IAnnotation[] annotations = getAnnotations(packageDeclaration);
-            ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
-            IImportDeclaration[] imports = getImports(compilationUnit);
-
-            return test(fcqn, imports, annotations);
+            return isPackageAnnotating(source, fqcn) || isTypeAnnotating(source, fqcn);
         }
     }
 
@@ -716,20 +536,7 @@ class JMolecules {
         @Override
         public boolean test(IJavaElement source) {
             String fqcn = "org.jmolecules.architecture.layered.InterfaceLayer";
-            return testPackage(fqcn, source) || isTypeAnnotating(source, fqcn);
-        }
-
-        private boolean testPackage(String fcqn, IJavaElement source) {
-            if (!(source instanceof IPackageDeclaration)) {
-                return false;
-            }
-
-            IPackageDeclaration packageDeclaration = (IPackageDeclaration) source;
-            IAnnotation[] annotations = getAnnotations(packageDeclaration);
-            ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
-            IImportDeclaration[] imports = getImports(compilationUnit);
-
-            return test(fcqn, imports, annotations);
+            return isPackageAnnotating(source, fqcn) || isTypeAnnotating(source, fqcn);
         }
     }
 
@@ -743,20 +550,7 @@ class JMolecules {
         @Override
         public boolean test(IJavaElement source) {
             String fqcn = "org.jmolecules.architecture.onion.classical.ApplicationServiceRing";
-            return testPackage(fqcn, source) || isTypeAnnotating(source, fqcn);
-        }
-
-        private boolean testPackage(String fcqn, IJavaElement source) {
-            if (!(source instanceof IPackageDeclaration)) {
-                return false;
-            }
-
-            IPackageDeclaration packageDeclaration = (IPackageDeclaration) source;
-            IAnnotation[] annotations = getAnnotations(packageDeclaration);
-            ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
-            IImportDeclaration[] imports = getImports(compilationUnit);
-
-            return test(fcqn, imports, annotations);
+            return isPackageAnnotating(source, fqcn) || isTypeAnnotating(source, fqcn);
         }
     }
 
@@ -770,20 +564,7 @@ class JMolecules {
         @Override
         public boolean test(IJavaElement source) {
             String fqcn = "org.jmolecules.architecture.onion.classical.DomainModelRing";
-            return testPackage(fqcn, source) || isTypeAnnotating(source, fqcn);
-        }
-
-        private boolean testPackage(String fcqn, IJavaElement source) {
-            if (!(source instanceof IPackageDeclaration)) {
-                return false;
-            }
-
-            IPackageDeclaration packageDeclaration = (IPackageDeclaration) source;
-            IAnnotation[] annotations = getAnnotations(packageDeclaration);
-            ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
-            IImportDeclaration[] imports = getImports(compilationUnit);
-
-            return test(fcqn, imports, annotations);
+            return isPackageAnnotating(source, fqcn) || isTypeAnnotating(source, fqcn);
         }
     }
 
@@ -797,20 +578,7 @@ class JMolecules {
         @Override
         public boolean test(IJavaElement source) {
             String fqcn = "org.jmolecules.architecture.onion.classical.DomainServiceRing";
-            return testPackage(fqcn, source) || isTypeAnnotating(source, fqcn);
-        }
-
-        private boolean testPackage(String fcqn, IJavaElement source) {
-            if (!(source instanceof IPackageDeclaration)) {
-                return false;
-            }
-
-            IPackageDeclaration packageDeclaration = (IPackageDeclaration) source;
-            IAnnotation[] annotations = getAnnotations(packageDeclaration);
-            ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
-            IImportDeclaration[] imports = getImports(compilationUnit);
-
-            return test(fcqn, imports, annotations);
+            return isPackageAnnotating(source, fqcn) || isTypeAnnotating(source, fqcn);
         }
     }
 
@@ -829,20 +597,7 @@ class JMolecules {
         @Override
         public boolean test(IJavaElement source) {
             String fqcn = "org.jmolecules.architecture.onion.classical.InfrastructureRing";
-            return testPackage(fqcn, source) || isTypeAnnotating(source, fqcn);
-        }
-
-        private boolean testPackage(String fcqn, IJavaElement source) {
-            if (!(source instanceof IPackageDeclaration)) {
-                return false;
-            }
-
-            IPackageDeclaration packageDeclaration = (IPackageDeclaration) source;
-            IAnnotation[] annotations = getAnnotations(packageDeclaration);
-            ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
-            IImportDeclaration[] imports = getImports(compilationUnit);
-
-            return test(fcqn, imports, annotations);
+            return isPackageAnnotating(source, fqcn) || isTypeAnnotating(source, fqcn);
         }
     }
 
@@ -856,20 +611,7 @@ class JMolecules {
         @Override
         public boolean test(IJavaElement source) {
             String fqcn = "org.jmolecules.architecture.onion.simplified.ApplicationRing";
-            return testPackage(fqcn, source) || isTypeAnnotating(source, fqcn);
-        }
-
-        private boolean testPackage(String fcqn, IJavaElement source) {
-            if (!(source instanceof IPackageDeclaration)) {
-                return false;
-            }
-
-            IPackageDeclaration packageDeclaration = (IPackageDeclaration) source;
-            IAnnotation[] annotations = getAnnotations(packageDeclaration);
-            ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
-            IImportDeclaration[] imports = getImports(compilationUnit);
-
-            return test(fcqn, imports, annotations);
+            return isPackageAnnotating(source, fqcn) || isTypeAnnotating(source, fqcn);
         }
     }
 
@@ -883,20 +625,7 @@ class JMolecules {
         @Override
         public boolean test(IJavaElement source) {
             String fqcn = "org.jmolecules.architecture.onion.simplified.DomainRing";
-            return testPackage(fqcn, source) || isTypeAnnotating(source, fqcn);
-        }
-
-        private boolean testPackage(String fcqn, IJavaElement source) {
-            if (!(source instanceof IPackageDeclaration)) {
-                return false;
-            }
-
-            IPackageDeclaration packageDeclaration = (IPackageDeclaration) source;
-            IAnnotation[] annotations = getAnnotations(packageDeclaration);
-            ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
-            IImportDeclaration[] imports = getImports(compilationUnit);
-
-            return test(fcqn, imports, annotations);
+            return isPackageAnnotating(source, fqcn) || isTypeAnnotating(source, fqcn);
         }
     }
 
@@ -915,20 +644,7 @@ class JMolecules {
         @Override
         public boolean test(IJavaElement source) {
             String fqcn = "org.jmolecules.architecture.onion.simplified.InfrastructureRing";
-            return testPackage(fqcn, source) || isTypeAnnotating(source, fqcn);
-        }
-
-        private boolean testPackage(String fcqn, IJavaElement source) {
-            if (!(source instanceof IPackageDeclaration)) {
-                return false;
-            }
-
-            IPackageDeclaration packageDeclaration = (IPackageDeclaration) source;
-            IAnnotation[] annotations = getAnnotations(packageDeclaration);
-            ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
-            IImportDeclaration[] imports = getImports(compilationUnit);
-
-            return test(fcqn, imports, annotations);
+            return isPackageAnnotating(source, fqcn) || isTypeAnnotating(source, fqcn);
         }
     }
 }

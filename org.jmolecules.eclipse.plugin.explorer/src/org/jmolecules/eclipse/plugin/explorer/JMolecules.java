@@ -175,6 +175,35 @@ class JMolecules {
 
     static interface AnnotationBasedConcept extends Concept {
 
+        default boolean isAnnotationAnnotating(IJavaElement source, String fqcn) {
+            if (!(source instanceof IType)) {
+                return false;
+            }
+
+            IType type = (IType) source;
+            if (!isAnnotation(type)) {
+                return false;
+            }
+
+            IAnnotation[] annotations = getAnnotations(type);
+            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
+
+            return test(fqcn, imports, annotations);
+        }
+
+        default boolean isPackageAnnotating(IJavaElement source, String fqcn) {
+            if (!(source instanceof IPackageDeclaration)) {
+                return false;
+            }
+
+            IPackageDeclaration packageDeclaration = (IPackageDeclaration) source;
+            IAnnotation[] annotations = getAnnotations(packageDeclaration);
+            ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
+            IImportDeclaration[] imports = getImports(compilationUnit);
+
+            return test(fqcn, imports, annotations);
+        }
+
         default boolean isTypeAnnotating(IJavaElement source, String fqcn) {
             if (!(source instanceof IType)) {
                 return false;
@@ -238,37 +267,8 @@ class JMolecules {
 
         @Override
         public boolean test(IJavaElement source) {
-            String fcqn = "org.jmolecules.ddd.annotation.BoundedContext";
-            return testPackage(fcqn, source) || testAnnotation(fcqn, source);
-        }
-
-        private boolean testPackage(String fcqn, IJavaElement source) {
-            if (!(source instanceof IPackageDeclaration)) {
-                return false;
-            }
-
-            IPackageDeclaration packageDeclaration = (IPackageDeclaration) source;
-            IAnnotation[] annotations = getAnnotations(packageDeclaration);
-            ICompilationUnit compilationUnit = (ICompilationUnit) packageDeclaration.getParent();
-            IImportDeclaration[] imports = getImports(compilationUnit);
-
-            return test(fcqn, imports, annotations);
-        }
-
-        private boolean testAnnotation(String fcqn, IJavaElement source) {
-            if (!(source instanceof IType)) {
-                return false;
-            }
-
-            IType type = (IType) source;
-            if (!isAnnotation(type)) {
-                return false;
-            }
-
-            IAnnotation[] annotations = getAnnotations(type);
-            IImportDeclaration[] imports = getImports(type.getCompilationUnit());
-
-            return test(fcqn, imports, annotations);
+            String fqcn = "org.jmolecules.ddd.annotation.BoundedContext";
+            return isPackageAnnotating(source, fqcn) || isAnnotationAnnotating(source, fqcn);
         }
     }
 

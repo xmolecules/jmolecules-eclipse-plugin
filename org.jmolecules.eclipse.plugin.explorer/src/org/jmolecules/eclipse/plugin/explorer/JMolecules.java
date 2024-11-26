@@ -21,8 +21,6 @@ import static java.util.List.copyOf;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-import static org.apache.commons.lang.StringUtils.substringAfterLast;
-import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 import static org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept.Category.CQRS_ARCHITECTURE;
 import static org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept.Category.DDD;
 import static org.jmolecules.eclipse.plugin.explorer.JMolecules.Concept.Category.EVENTS;
@@ -235,8 +233,11 @@ class JMolecules {
             }
 
             IImportDeclaration[] imports = getImports(compilationUnit);
-            String pckg = substringBeforeLast(fqcn, ".").concat(".");
-            String name = substringAfterLast(fqcn, ".");
+            
+            int lastDotIndex = fqcn.lastIndexOf(".");
+            
+            String pckg = fqcn.substring(0, lastDotIndex - 1).concat(".");
+            String name = fqcn.substring(lastDotIndex + 1);
 
             return stream(imports).anyMatch(i -> i.getElementName().startsWith(pckg))
                     && (stream(annotations).anyMatch(a -> a.getElementName().equals(name)));

@@ -24,7 +24,7 @@ import static org.eclipse.swt.layout.GridData.FILL_BOTH;
 
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;

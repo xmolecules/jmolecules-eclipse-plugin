@@ -15,24 +15,17 @@
  */
 package org.jmolecules.eclipse.plugin.explorer;
 
-import static java.util.Arrays.stream;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
+import static java.util.Arrays.*;
+import static java.util.Collections.*;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static java.util.stream.Stream.concat;
-
-import static org.apache.commons.lang.builder.EqualsBuilder.reflectionEquals;
-import static org.apache.commons.lang.builder.HashCodeBuilder.reflectionHashCode;
-import static org.jmolecules.eclipse.plugin.explorer.JavaModelUtils.getChildren;
-import static org.jmolecules.eclipse.plugin.explorer.JavaModelUtils.getFields;
-import static org.jmolecules.eclipse.plugin.explorer.JavaModelUtils.getMethods;
-import static org.jmolecules.eclipse.plugin.explorer.JavaModelUtils.isPackageInfo;
+import static java.util.stream.Collectors.*;
+import static java.util.stream.Stream.*;
+import static org.jmolecules.eclipse.plugin.explorer.JavaModelUtils.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -176,12 +169,23 @@ class TreeNode {
 
     @Override
     public int hashCode() {
-        return reflectionHashCode(this, new String[] { "parent" });
+        return Objects.hash(children, source, concepts);
     }
 
     @Override
     public boolean equals(Object obj) {
-        return reflectionEquals(this, obj, new String[] { "parent" });
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof TreeNode that)) {
+            return false;
+        }
+
+        return this.children.equals(that.children)
+                && this.source.equals(that.source)
+                && this.concepts.equals(that.concepts);
     }
 
     Optional<TreeNode> findNode(IJavaElement source) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.jmolecules.eclipse.feature"
+      id="org.jmolecules.eclipse"
       label="jMolecules"
       version="1.0.0.qualifier"
       provider-name="jmolecules.org">
@@ -220,12 +220,11 @@ domain models in distraction-free, plain old Java.
    </license>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="javax.inject"/>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.e4.core.services"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.ui"/>
    </requires>
 
    <plugin

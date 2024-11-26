@@ -8,7 +8,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>org.jmolecules.eclipse.feature</artifactId>
+    <artifactId>org.jmolecules.eclipse</artifactId>
     <packaging>eclipse-feature</packaging>
 
     <name>JMolecules for Eclipse Feature</name>
